@@ -96,7 +96,7 @@ window.onload = wrap_img;
        • <span class="read-time" title="Estimated read time">
     
     
-      8 min read
+      9 min read
     
 </span></p>
 
@@ -978,7 +978,8 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">nums_tens</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">28</span><span class="o">*</span><span class="mi">28</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">nums_tens</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">5923</span><span class="p">,</span> <span class="mi">28</span><span class="o">*</span><span class="mi">28</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+<div class=" highlight hl-python"><pre><span></span><span class="c1"># -1 makes it so that we don&#39;t have to know how many images there are</span>
+<span class="n">nums_tens</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">28</span><span class="o">*</span><span class="mi">28</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">nums_tens</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">5923</span><span class="p">,</span> <span class="mi">28</span><span class="o">*</span><span class="mi">28</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 
     </div>
@@ -1011,7 +1012,8 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">nums_tens</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">nums_tens</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">28</span><span class="o">*</span><span class="mi">28</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+<div class=" highlight hl-python"><pre><span></span><span class="c1"># before we called .view(), our tensor was originally 28x28, but afterwards, it is 28*28 (784)</span>
+<span class="n">nums_tens</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">nums_tens</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">28</span><span class="o">*</span><span class="mi">28</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 
     </div>
@@ -1101,7 +1103,8 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="c1"># that we can 3 as its label</span>
+<div class=" highlight hl-python"><pre><span></span><span class="c1"># when we take a random 3, we can index into the labels at the same spot and see</span>
+<span class="c1"># that we can 3 as its label</span>
 <span class="n">show_image</span><span class="p">(</span><span class="n">nums_tens</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">200</span><span class="p">]),</span> <span class="n">train_y</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">nums_tens</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums_tens</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums_tens</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">+</span><span class="mi">200</span><span class="p">]</span>
 </pre></div>
 
@@ -1141,7 +1144,7 @@ window.onload = wrap_img;
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Like I said before, a dataset is just a list of tuples containing our independent and dependent variabbles:</p>
+<p>Like I said before, a dataset is just a list of tuples containing our independent and dependent variables:</p>
 
 </div>
 </div>
@@ -1195,7 +1198,8 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">show_image</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">))</span>
+<div class=" highlight hl-python"><pre><span></span><span class="c1"># we have to reshape our image from a 784 long vector into a 28*28 matrix</span>
+<span class="n">show_image</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">))</span>
 </pre></div>
 
     </div>
