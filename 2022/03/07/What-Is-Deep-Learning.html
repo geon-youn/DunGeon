@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>So, What is Deep Learning? | Geon’s Blog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="So, What is Deep Learning?" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="The DunGeon that holds ipynbs" />
+<meta property="og:description" content="The DunGeon that holds ipynbs" />
+<link rel="canonical" href="https://geon-youn.github.io/DunGeon/2022/03/07/What-Is-Deep-Learning.html" />
+<meta property="og:url" content="https://geon-youn.github.io/DunGeon/2022/03/07/What-Is-Deep-Learning.html" />
+<meta property="og:site_name" content="Geon’s Blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-03-07T00:00:00-06:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="So, What is Deep Learning?" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-03-07T00:00:00-06:00","datePublished":"2022-03-07T00:00:00-06:00","description":"The DunGeon that holds ipynbs","headline":"So, What is Deep Learning?","mainEntityOfPage":{"@type":"WebPage","@id":"https://geon-youn.github.io/DunGeon/2022/03/07/What-Is-Deep-Learning.html"},"url":"https://geon-youn.github.io/DunGeon/2022/03/07/What-Is-Deep-Learning.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/DunGeon/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://geon-youn.github.io/DunGeon/feed.xml" title="Geon's Blog" /><link rel="shortcut icon" type="image/x-icon" href="/DunGeon/images/icon.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/DunGeon/">Geon&#39;s Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/DunGeon/about/">About Me</a><a class="page-link" href="/DunGeon/search/">Search</a><a class="page-link" href="/DunGeon/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">So, What is Deep Learning?</h1><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-03-07T00:00:00-06:00" itemprop="datePublished">
+        Mar 7, 2022
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      8 min read
+    
+</span></p>
+
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-justify-center">
+          <div class="px-2">
+
+    <a href="https://github.com/geon-youn/DunGeon/tree/master/_notebooks/2022-03-07-What-Is-Deep-Learning.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/DunGeon/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/geon-youn/DunGeon/master?filepath=_notebooks%2F2022-03-07-What-Is-Deep-Learning.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/DunGeon/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/geon-youn/DunGeon/blob/master/_notebooks/2022-03-07-What-Is-Deep-Learning.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/DunGeon/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+          <div class="px-2">
+  <a href="https://deepnote.com/launch?url=https%3A%2F%2Fgithub.com%2Fgeon-youn%2FDunGeon%2Fblob%2Fmaster%2F_notebooks%2F2022-03-07-What-Is-Deep-Learning.ipynb" target="_blank">
+      <img class="notebook-badge-image" src="/DunGeon/assets/badges/deepnote.svg" alt="Launch in Deepnote"/>
+  </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2022-03-07-What-Is-Deep-Learning.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So what is deep learning? From what I've seen so far of the fast.ai course (chapters 1 to 7), deep learning is training a model with labelled data such that it is able to predict labels for unlabelled data in practice.</p>
+<p>With a standard algorithm, you get inputs, you give it to the algorithm, and you get an output; you know the code in the algorithm (or at least, you should understand it). It's similar in a deep learning model: you know how the model is going to be trained (by hyperparameters like loss function, architecture like <code>resnet18</code>, optimizer like <code>SGD</code>, number of epochs, etc.) and you can look into the parameters (what the model learned; e.g., in vision models you can look at the layers and see how the earlier layers learn things like edges, gradients, etc. while the later layers learn more of the complex things like dog faces).</p>
+<p>The difference is that you didn't hard code the parameters - hopefully - like how you hard coded the algorithm (or copied from a library or Stack Overflow). You have to train the model by giving it labelled data. Emphasis on <strong>labelled</strong> data. The model can't <em>learn</em> if it doesn't have anything to learn from. Why? Because you're creating a model to <em>predict labels</em> so your data should be labelled. So, a lot of deep learning ends up just labelling your data correctly (or labelling your data in general).</p>
+<p>Then, there's overfitting - an obstacle that prevents your model from being useful. Imagine this: your model predicts your training data with near 100% accuracy. Congrats! You should get an award! Oh, wait, your model can only predict the validation set with 90% accuracy. Oh, double wait, your model can only predict the test set with 50% accuracy... WHAT'S HAPPENING? Your model is <strong>memorizing</strong> (over-fitting) your training data instead of actually <em>learning</em> from it.</p>
+<p>So, you should be careful when training your model. There's so many options you can tune when training a model. From what I've seen so far, you usually overfit by</p>
+<ul>
+<li>having a large number of epochs,</li>
+<li>using too large or small learning rate,</li>
+<li>having a poorly split dataset (like having a random split on a time series data), and</li>
+<li>making some post-training decisions that you end up overfitting on the validation set, and</li>
+<li>not using a pre-trained model (if one exists for your intentions).  </li>
+</ul>
+<p>Remember, you want your model to be good at generalizing on previously unseen data... unless you have a dataset that's so large that there is no previously unseen data. It doesn't matter how well your model does on your training and validation sets if it doesn't work with the test set or a random piece of data you give it!</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Then,-What-is-a-Deep-Learning-Model?">Then, What is a Deep Learning Model?<a class="anchor-link" href="#Then,-What-is-a-Deep-Learning-Model?"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A deep learning model consists of layers. Remember how I mentioned <code>resnet18</code>? That's an architecture (pre-trained too, which means it's been trained on a dataset before and we're retraining it with our own dataset which saves time and money since we'll start with a pretty high accuracy). An architecture is the skeleton of a deep learning model. It contains all the layers and parameters. <code>resnet18</code> as you could assume, contains 18 layers.</p>
+<p>A layer is technically composed of two things. The first is a linear layer ($w\cdot x+b$, where $w$ are the weights, $x$ is the data or input, and $b$ is the bias; what people call the <em>parameters</em> of a model is the weights and biases) followed by a non-linear layer typically a ReLU (<strong>re</strong>ctified <strong>l</strong>inear <strong>u</strong>nit, which turns all negative numbers to 0 and keeps positive numbers as is). So, you may be wondering: why do we need both? Well, if you only had linear layers, you could combine all of them into a single layer. So, we need some kind of nonlinearity so that we can prevent the linear layers from becoming one big linear layer.</p>
+<p>Now, lets say you have an image. We transform the data, for example through resizing and augmenting it (sort of like distorting it, but in a good way), such that it's $224\times 224$ pixels large. That's $50176$ pixels. Then, there could be $4$ more categories for red, green, blue, and alpha (transparency). That becomes $200704$ input values for the first layer. With each layer, you want to decrease that value until the last layer, where you'll have $n$ outputs since you have $n$ different labels.</p>
+<p>Then, how does the model actually learn? Every time you pass a piece of data and you get a prediction, that prediction is passed onto a function called the loss function (what you care about is the metric function, the computer cares about the loss function), using that loss function, each parameter takes a step in the opposite direction of the slope of that loss function at that paramter's value such that by the next prediction, the value of the loss function is smaller. How big is that step? It's determined by the learning rate you chose. That's why it's important to have a good loss function and a reasonable learning rate.</p>
+<p>And, you may be saying, "that's cool and all, but how does that step actually work?" Each number in a layer (weights and biases) are set so that they keep track of what functions are applied to them. So, when you take a "step" (or optimize; hence, "optimizer" like <code>SGD</code>), you first calculate the function of the derivates of the functions applied through chain rule and takes the value of that gradient (so if the derivative is $f'$ and the number is $x$, the value would be $f'(x)$). Then, with the learning rate, you take a step in the opposite direction such that you descend (<code>parameters -= gradient * learning_rate</code>). Now you can guess why they called the process "<em>s</em>tochastic <em>g</em>radient <em>d</em>escent." You descend the loss function (which should be easily differentiable and typically have non-zero gradients) based on the gradient and the parameters are usually randomly assigned, hence "stochastic."</p>
+<p>With each epoch (which is one complete pass through the data), the parameters are finetuned for your task, eventually memorizing the training set. You don't want that, so you train it for as few epochs as you need (to prevent overfitting and to save time).</p>
+<p>Remember when I said "you care about the metric function?" That's what you want to pay attention to after each epoch. Metric functions are typically things like accuracy or error rate (which is <code>1 - accuracy</code>), which are helpful for us to analyze our model, but terrible for our model to use as loss functions.</p>
+<p>With an overfitting model, you usually see two things: the loss for the training set continues to decrease, but the loss for the validation set is suddenly increasing. The opposite is true for the metric: the metric for the training set is increasing, but the metric for the validation set is decreasing. That's why you typically want a test set. A training set is the set your model sees when it's training. A validation set is for your eyes only and used to test how well the model is learning. A test set is for no one's eyes. Only for God's eyes or whatever you believe in. Once you finished training your model and tuned all the hyperparameters you want, a test set will tell you how well your model actually trained.</p>
+<p>Of course, the validation set and training set are going to be useless if you split your data badly. The common example is with a time series dataset. If you split your data randomly, the model can easily predict intermediate values, but why would you want to know about the past? You want to predict the future. So, you could have your training set consist of data not containing the most recent 6 months, for example. And your validation set consists of the remaining 6 months. You could even take the most recent month out and put the first 5 months into your validation set instead and the most recent month into the test set. Whenever you split your data, make sure it's with the intention that the model will be learning the patterns of the data such that it can generalize to future, never-seen-before data.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="That's-it?">That's it?<a class="anchor-link" href="#That's-it?"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Well, that's basically what I got so far from fast.ai. With Arthur Samuel's definition of deep learning, you essentially have a model, where you give it labelled data as input, it produces predictions, then those predictions are passed to a loss function, then you optimize the predictions and repeat for $n$ many epochs until you reach a certain point and stop training the model.</p>
+<p>There are many parts that you can change in a model with some that you have to change depending on the task, particularly the loss function.</p>
+<p>I've mainly been focusing on computer vision since that's what the first 7 chapters were about (apart from chapter 1; I'm also leaving chapter 3 for last, which is about ethics).</p>
+<p>Next time you see me, I'll be talking about tabular data.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><a class="u-url" href="/DunGeon/2022/03/07/What-Is-Deep-Learning.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/DunGeon/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/DunGeon/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/DunGeon/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>The DunGeon that holds ipynbs</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/geon-youn" target="_blank" title="geon-youn"><svg class="svg-icon grey"><use xlink:href="/DunGeon/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/griolu" target="_blank" title="griolu"><svg class="svg-icon grey"><use xlink:href="/DunGeon/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
