@@ -154,9 +154,10 @@ window.onload = wrap_img;
 <p>Let's look at Bingus. He's a McMaster alumni turned McDonald's employee. He works an 8 AM to 6 PM shift flipping burgers for minimum wage and gets home to watch some movies. He really likes this one movie called "Cars 3". He's watched dozens of times now and he won't stop.</p>
 <p>Then comes Alice. Unlike Bingus, she graduated from Waterloo and landed a CS job earning six figures. She even graduated with the highest GPA of her year and landed that CS job through a return offer from her summer coop. So what? Alice and Bingus both like "Cars 3".</p>
 <p>Since they both like "Cars 3", we could recommend Alice movies that Bingus also likes and recommend Bingus movies that Alice also likes.</p>
-<blockquote><p><strong>Collaborative filtering</strong>:look at items the current user used or liked, find other users that used or liked <em>similar</em> items, then recommend those items to the current user. 
-Collaborative filtering works through <strong>latent factors</strong>, which are basically the "tags" you would give an item. For example, you could give a movie tags like "science fiction," "action," "old," "horror," and "romance." It's <em>latent</em> because it depends on users for the factors to have meaning.</p>
-</blockquote>
+<hr />
+<p><strong>Collaborative filtering</strong>: look at items the current user used or liked, find other users that used or liked <em>similar</em> items, then recommend those items to the current user.</p>
+<hr />
+<p>Collaborative filtering works through <strong>latent factors</strong>, which are basically the "tags" you would give an item. For example, you could give a movie tags like "science fiction," "action," "old," "horror," and "romance." It's <em>latent</em> because it depends on users for the factors to have meaning.</p>
 <p>What's wild is we never tell our model the latent factors. We just say how many we want and the model learns them on its own. So, we don't need to know anything about the items (in a descriptive way); we just need the data on the users and the items.</p>
 
 </div>
@@ -178,12 +179,15 @@ Collaborative filtering works through <strong>latent factors</strong>, which are
 </ul>
 <p>We first randomly initialize some parameters for our latent factors. Let's say we want our model to learn 5 latent factors. Then, each user and item would have 5 parameters (or, a 5-dimensional vector). We can use the dot product between the user and the item as our prediction of how likely we would recommend an item to a user. The higher the value, the more likely the user will like that product.</p>
 <p>Finally, we need to pick a loss function. Since we're dealing with regression instead of classification (like digit classification), we can use L1 norm or L2 norm.</p>
-<blockquote><p><strong>L1 norm (absolute mean difference)</strong>:take the absolute difference between two values and take the mean.&gt; $$L_1=\sum^n_{i=0}\frac{|a_i-b_i|}{2}, \,a\in A, \, b\in B$$</p>
-<p><strong>L2 norm (root mean squared error)</strong>:take the square of the differences between two values and take the mean. Then, square root the result.&gt; $$L_2=\sqrt{\sum^n_{i=0}\frac{(a_i-b_i)^2}{2}}, \,a\in A, \, b\in B$$</p>
-</blockquote>
+<hr />
+<p><strong>L1 norm (absolute mean difference)</strong>: take the absolute difference between two values and take the mean.</p>
+$$L_1=\sum^n_{i=0}\frac{|a_i-b_i|}{2}, \,a\in A, \, b\in B$$<p></p>
+<p><strong>L2 norm (root mean squared error)</strong>: take the square of the differences between two values and take the mean. Then, square root the result.
+$$L_2=\sqrt{\sum^n_{i=0}\frac{(a_i-b_i)^2}{2}}, \,a\in A, \, b\in B$$</p>
+<hr />
 <p>What's the difference? L2 norm puts a larger emphasis on small and large changes because of squaring since <code>large * large = larger</code> and <code>small * small = smaller</code>.</p>
-<p>Now, we have all we need for stochastic gradient descent:random parameters, a way to calculate our predictions, and our loss function. 
-At each step, the SGD optimizer calculates the match between each item and user (random parameters) using the dot product (procedure for predictions), and compares it to the actual rating that each user gave to each item (loss function). Then, it calculates the derivative of this value (gradient) and steps the weights by multiplying the calculated derivative by the learning rate and subtracting the weights by that value (descent).</p>
+<p>Now, we have all we need for stochastic gradient descent: random parameters, a way to calculate our predictions, and our loss function.</p>
+<p>At each step, the SGD optimizer calculates the match between each item and user (random parameters) using the dot product (procedure for predictions), and compares it to the actual rating that each user gave to each item (loss function). Then, it calculates the derivative of this value (gradient) and steps the weights by multiplying the calculated derivative by the learning rate and subtracting the weights by that value (descent).</p>
 <p>After each epoch, the loss gets better (lower) and the recommendations will also get better.</p>
 
 </div>
@@ -200,9 +204,10 @@ At each step, the SGD optimizer calculates the match between each item and user 
 <p>There's usually a range for ratings on an item. Like "out of 5 stars". So, you should put a range on your predictions so that they're in a similar range as the rating system you have for an item. For example, if a movie service has a rating system from 0 to 5, you should have a range from 0 to 5.5. It's been discovered empirically that having the upper bound a little bit over returns better results.</p>
 <p>And, remember how parameters are the weights <em>and biases</em>? We should also have biases attached to each user and each item. Some users may be more positive or negative than others. And, some items may be superior than others. It could also reflect current trends. Nonetheless, adding biases on their own usually leads to overfitting.</p>
 <p>So, you also need to add L2 regularization,</p>
-<blockquote><p><strong>L2 regularization (weight decay)</strong>:add the sum of all the weights squared to your loss function.
-Why? Because when you compute the gradients, the added sum encourages the weights to be as small as possible. It prevents overfitting because having high parameters lead to sharper changes in the loss function, which can lead to overfitting. So, having smaller parameters encouraged by weight decay decreases that.</p>
-</blockquote>
+<hr />
+<p><strong>L2 regularization (weight decay)</strong>: add the sum of all the weights squared to your loss function.</p>
+<hr />
+<p>Why? Because when you compute the gradients, the added sum encourages the weights to be as small as possible. It prevents overfitting because having high parameters lead to sharper changes in the loss function, which can lead to overfitting. So, having smaller parameters encouraged by weight decay decreases that.</p>
 <p>However, you don't apply weight decay by adding the sum of all weights squared to the loss function (it would be inefficient and lead to huge numbers). Instead, add double the parameters to the gradient since the derivative of $x^2$ is $2x$. And, weight decay is just a hyperparameter that you multiply $2x$ by, so what you actually do is <code>gradient += wd * 2 * parameters</code>, which is essentially <code>gradient += wd * parameters</code> (2 is incorporated into <code>wd</code> like how you just have <code>+ C</code> for integrals). The end result of adding biases with weight decay is that we make training the model a bit harder, but the model will generalize better in practice.</p>
 
 </div>
@@ -224,7 +229,10 @@ Why? Because when you compute the gradients, the added sum encourages the weight
 </ul>
 <p>Interpreting the latent factors is a bit trickier in that you can't just model it. But, there is a technique called principal component analysis, which lets you take the most important <em>directions</em> in the latent factors.</p>
 <p>There's a simpler alternative if you just want to compare a few items: you can calculate the "distance" between two items. If two items were very similar, then their latent factors would also be similar. So, their "distance" would be low compared to the distance between a more different item. Ultimately, item similarity in a model is dictated by the similarity of users that like those items.</p>
-<p>To calculate to distance, you use Pythagoras' formula $d=\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}$, except you would do this for how many dimensions there are. For example, the distance between two 50-dimensional embedding (the parameters) would be $d=\sqrt{(x_{2,1}-x_{1,1})^2+(x_{2,2}-x_{1,2})^2+\dots+(x_{2,50}-x_{1,50})^2}$.</p>
+<p>To calculate to distance, you use Pythagoras' formula:</p>
+$$d=\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}$$<p></p>
+<p>except you would do this for how many dimensions there are. For example, the distance between two 50-dimensional embedding (the parameters) would be</p>
+$$d=\sqrt{(x_{2,1}-x_{1,1})^2+(x_{2,2}-x_{1,2})^2+\dots+(x_{2,50}-x_{1,50})^2}$$<p></p>
 <p>So, say you have one movie, "Cars 3" and two other movies: "Cars 4" and "Harry Potter". The distance between "Cars 3" and "Cars 4" might be 50, while it's 100 for "Cars 3" and "Harry Potter". Then, since the distance for the former is shorter, you could infer that "Cars  3" is more similar to "Cars 4" than "Cars 3" is to "Harry Potter".</p>
 
 </div>
@@ -239,14 +247,16 @@ Why? Because when you compute the gradients, the added sum encourages the weight
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>We all know by now that overfitting is a big problem in the training process. But, there's an equally important problem in practice for collaborative filtering: the bootstrapping problem.</p>
-<blockquote><p><strong>Bootstrap</strong>:to start something with little help.&gt; <strong>Bootstrapping problem</strong>:what do you do when you have no users (no data) to train your model; and, if you do have previous users, what do you recommend for a new user? Similarly, what do you do when you add a new item?
-Like overfitting, there isn't a solution that works for everything, but there are some used commonly:</p>
+<hr />
+<p><strong>Bootstrap</strong>: to start something with little help.</p>
+<p><strong>Bootstrapping problem</strong>: what do you do when you have no users (no data) to train your model; and, if you do have previous users, what do you recommend for a new user? Similarly, what do you do when you add a new item?</p>
+<hr />
+<p>Like overfitting, there isn't a solution that works for everything, but there are some used commonly:</p>
 <ul>
 <li>assign the mean/median of all the latent factors to the new user or item;</li>
 <li>pick a specific user or item to represent the average user;</li>
 <li>survey the new user or item to construct a basic set of latent factors for them.</li>
 </ul>
-</blockquote>
 <p>However, solutions to the bootstrapping problem leads to another problem: <strong>positive feedback loops</strong>. A small number of otakus can set the recommendation for the entire user base. You might expect this feedback loop to be an outlier, but it's actually the norm. For example, even though not a lot of people watch anime, a few people really enjoy "Demon Slayer"; so when the movie came out, it became highly recommended for the general user base. Similarly, "Squid Game" also became popular this way along with many Korean movies like "Parasite" and "Train to Busan". It's only when the systems do something about it (like deliberately lower its bias, don't recommend it anymore, or through time) that the feedback loop stops.</p>
 <p>The bias for certain items in the latent factors may be due to representation bias. If you don't want your entire user base (and your system) to change, then you have to be wary of these feedback loops. Once the bias becomes too high, more people of the same group come along and your user base ends up being that group.</p>
 <p>An easy way to prepare for feedback loops is to integrate your model slowly:</p>
