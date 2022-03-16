@@ -163,7 +163,7 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">fastai.collab</span> <span class="kn">import</span> <span class="o">*</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">fastai.collab</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">fastai.tabular.all</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="n">path</span> <span class="o">=</span> <span class="n">untar_data</span><span class="p">(</span><span class="n">URLs</span><span class="o">.</span><span class="n">ML_100k</span><span class="p">)</span>
 <span class="n">Path</span><span class="o">.</span><span class="n">BASE_PATH</span> <span class="o">=</span> <span class="n">path</span>
@@ -173,7 +173,9 @@ window.onload = wrap_img;
     </div>
 </div>
 </div>
-
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Output" data-close="Show Output"></summary>
+        <p>
 <div class="output_wrapper">
 <div class="output">
 
@@ -225,7 +227,8 @@ window.onload = wrap_img;
 
 </div>
 </div>
-
+</p>
+    </details>
 </div>
     
 
@@ -243,13 +246,15 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="err">!</span><span class="n">cat</span> <span class="p">{</span><span class="n">path</span><span class="p">}</span><span class="o">/</span><span class="n">README</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>cat <span class="o">{</span>path<span class="o">}</span>/README
 </pre></div>
 
     </div>
 </div>
 </div>
-
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Output" data-close="Show Output"></summary>
+        <p>
 <div class="output_wrapper">
 <div class="output">
 
@@ -419,7 +424,8 @@ mku.sh     -- A shell script to generate all the u data sets from u.data.
 
 </div>
 </div>
-
+</p>
+    </details>
 </div>
     
 
@@ -437,7 +443,7 @@ mku.sh     -- A shell script to generate all the u data sets from u.data.
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">ratings</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ratings</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
     <span class="n">path</span><span class="o">/</span><span class="s1">&#39;u.data&#39;</span><span class="p">,</span>
     <span class="n">delimiter</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
     <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -620,7 +626,7 @@ mku.sh     -- A shell script to generate all the u data sets from u.data.
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">movies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">movies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
     <span class="n">path</span><span class="o">/</span><span class="s1">&#39;u.item&#39;</span><span class="p">,</span>
     <span class="n">delimiter</span> <span class="o">=</span> <span class="s1">&#39;|&#39;</span><span class="p">,</span>
     <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -794,7 +800,7 @@ mku.sh     -- A shell script to generate all the u data sets from u.data.
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">ratings</span> <span class="o">=</span> <span class="n">ratings</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">movies</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ratings</span> <span class="o">=</span> <span class="n">ratings</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">movies</span><span class="p">)</span>
 <span class="n">ratings</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
@@ -979,7 +985,7 @@ mku.sh     -- A shell script to generate all the u data sets from u.data.
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">dls</span> <span class="o">=</span> <span class="n">CollabDataLoaders</span><span class="o">.</span><span class="n">from_df</span><span class="p">(</span><span class="n">ratings</span><span class="p">,</span> <span class="n">item_name</span> <span class="o">=</span> <span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="n">bs</span> <span class="o">=</span> <span class="mi">64</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dls</span> <span class="o">=</span> <span class="n">CollabDataLoaders</span><span class="o">.</span><span class="n">from_df</span><span class="p">(</span><span class="n">ratings</span><span class="p">,</span> <span class="n">item_name</span> <span class="o">=</span> <span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="n">bs</span> <span class="o">=</span> <span class="mi">64</span><span class="p">)</span>
 <span class="n">dls</span><span class="o">.</span><span class="n">show_batch</span><span class="p">()</span>
 </pre></div>
 
@@ -1098,7 +1104,7 @@ $$\begin{bmatrix}0 &amp; 1 &amp; 2 &amp; 3\end{bmatrix}^T\begin{bmatrix}0&amp;0&
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">n_users</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dls</span><span class="o">.</span><span class="n">classes</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">n_users</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dls</span><span class="o">.</span><span class="n">classes</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">])</span>
 <span class="n">n_items</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dls</span><span class="o">.</span><span class="n">classes</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">])</span>
 <span class="n">n_factors</span> <span class="o">=</span> <span class="mi">50</span>
 </pre></div>
@@ -1117,7 +1123,7 @@ $$\begin{bmatrix}0 &amp; 1 &amp; 2 &amp; 3\end{bmatrix}^T\begin{bmatrix}0&amp;0&
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="k">class</span> <span class="nc">DotProduct</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">DotProduct</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
         <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span><span class="p">,</span> <span class="n">n_factors</span><span class="p">,</span> <span class="n">y_range</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)):</span>
             <span class="c1"># User latent factors and biases</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">user_factors</span> <span class="o">=</span> <span class="n">Embedding</span><span class="p">(</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_factors</span><span class="p">)</span>
@@ -1166,7 +1172,7 @@ $$\begin{bmatrix}0 &amp; 1 &amp; 2 &amp; 3\end{bmatrix}^T\begin{bmatrix}0&amp;0&
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">DotProduct</span><span class="p">(</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span><span class="p">,</span> <span class="n">n_factors</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">DotProduct</span><span class="p">(</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span><span class="p">,</span> <span class="n">n_factors</span><span class="p">)</span>
 <span class="n">learn</span> <span class="o">=</span> <span class="n">Learner</span><span class="p">(</span><span class="n">dls</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">loss_func</span> <span class="o">=</span> <span class="n">MSELossFlat</span><span class="p">())</span>
 <span class="c1"># We also use weight decay since we have bias in our model</span>
 <span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">5e-3</span><span class="p">,</span> <span class="n">wd</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">)</span>
@@ -1271,7 +1277,7 @@ $$\begin{bmatrix}0 &amp; 1 &amp; 2 &amp; 3\end{bmatrix}^T\begin{bmatrix}0&amp;0&
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span> <span class="o">=</span> <span class="n">collab_learner</span><span class="p">(</span><span class="n">dls</span><span class="p">,</span> <span class="n">n_factors</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span> <span class="n">y_range</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learn</span> <span class="o">=</span> <span class="n">collab_learner</span><span class="p">(</span><span class="n">dls</span><span class="p">,</span> <span class="n">n_factors</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span> <span class="n">y_range</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">))</span>
 <span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">5e-3</span><span class="p">,</span> <span class="n">wd</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">)</span>
 </pre></div>
 
@@ -1374,7 +1380,7 @@ $$\begin{bmatrix}0 &amp; 1 &amp; 2 &amp; 3\end{bmatrix}^T\begin{bmatrix}0&amp;0&
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="c1"># 50 latent factors for users and items</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># 50 latent factors for users and items</span>
 <span class="c1"># bias for users and items</span>
 <span class="n">learn</span><span class="o">.</span><span class="n">model</span>
 </pre></div>
@@ -1421,7 +1427,7 @@ $$\begin{bmatrix}0 &amp; 1 &amp; 2 &amp; 3\end{bmatrix}^T\begin{bmatrix}0&amp;0&
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">embs</span> <span class="o">=</span> <span class="n">get_emb_sz</span><span class="p">(</span><span class="n">dls</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">embs</span> <span class="o">=</span> <span class="n">get_emb_sz</span><span class="p">(</span><span class="n">dls</span><span class="p">)</span>
 <span class="n">embs</span>
 </pre></div>
 
@@ -1462,7 +1468,7 @@ $$\begin{bmatrix}0 &amp; 1 &amp; 2 &amp; 3\end{bmatrix}^T\begin{bmatrix}0&amp;0&
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="k">class</span> <span class="nc">SimpleNet</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">SimpleNet</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_sz</span><span class="p">,</span> <span class="n">item_sz</span><span class="p">,</span> <span class="n">y_range</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">),</span> <span class="n">n_acts</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
         <span class="c1"># nn.Linear implements bias implicitly, so we</span>
         <span class="c1"># don&#39;t need to define our own bias.</span>
@@ -1501,7 +1507,7 @@ $$\begin{bmatrix}0 &amp; 1 &amp; 2 &amp; 3\end{bmatrix}^T\begin{bmatrix}0&amp;0&
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">SimpleNet</span><span class="p">(</span><span class="o">*</span><span class="n">embs</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">SimpleNet</span><span class="p">(</span><span class="o">*</span><span class="n">embs</span><span class="p">)</span>
 <span class="n">learn</span> <span class="o">=</span> <span class="n">Learner</span><span class="p">(</span><span class="n">dls</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">loss_func</span> <span class="o">=</span> <span class="n">MSELossFlat</span><span class="p">())</span>
 <span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">5e-3</span><span class="p">,</span> <span class="n">wd</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">)</span>
 </pre></div>
@@ -1605,7 +1611,7 @@ $$\begin{bmatrix}0 &amp; 1 &amp; 2 &amp; 3\end{bmatrix}^T\begin{bmatrix}0&amp;0&
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="c1"># We just have to enable the use_nn parameter and</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># We just have to enable the use_nn parameter and</span>
 <span class="c1"># give it layers</span>
 <span class="n">learn</span> <span class="o">=</span> <span class="n">collab_learner</span><span class="p">(</span><span class="n">dls</span><span class="p">,</span> <span class="n">use_nn</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">y_range</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">),</span> <span class="n">layers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">50</span><span class="p">])</span>
 <span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">5e-3</span><span class="p">,</span> <span class="n">wd</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">)</span>
@@ -1717,7 +1723,7 @@ $$\begin{bmatrix}0 &amp; 1 &amp; 2 &amp; 3\end{bmatrix}^T\begin{bmatrix}0&amp;0&
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="c1"># First, take the biases and put them into</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># First, take the biases and put them into</span>
 <span class="c1"># a one-dimensional tensor that we can sort</span>
 <span class="n">item_bias</span> <span class="o">=</span> <span class="n">learn</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item_bias</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
 <span class="c1"># argsort returns a list of indexes that would</span>
@@ -1775,7 +1781,7 @@ $$\begin{bmatrix}0 &amp; 1 &amp; 2 &amp; 3\end{bmatrix}^T\begin{bmatrix}0&amp;0&
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">item_factors</span> <span class="o">=</span> <span class="n">learn</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item_factors</span><span class="o">.</span><span class="n">weight</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">item_factors</span> <span class="o">=</span> <span class="n">learn</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item_factors</span><span class="o">.</span><span class="n">weight</span>
 <span class="n">idx</span> <span class="o">=</span> <span class="n">dls</span><span class="o">.</span><span class="n">classes</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">o2i</span><span class="p">[</span><span class="s1">&#39;Toy Story (1995)&#39;</span><span class="p">]</span>
 <span class="n">distances</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CosineSimilarity</span><span class="p">()(</span><span class="n">item_factors</span><span class="p">,</span> <span class="n">item_factors</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="kc">None</span><span class="p">])</span>
 <span class="n">idx</span> <span class="o">=</span> <span class="n">distances</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">descending</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
