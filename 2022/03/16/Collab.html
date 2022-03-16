@@ -1,0 +1,1852 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>So you want to code Collaborative Filtering | Geon’s Blog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="So you want to code Collaborative Filtering" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="The DunGeon that holds ipynbs" />
+<meta property="og:description" content="The DunGeon that holds ipynbs" />
+<link rel="canonical" href="https://geon-youn.github.io/DunGeon/2022/03/16/Collab.html" />
+<meta property="og:url" content="https://geon-youn.github.io/DunGeon/2022/03/16/Collab.html" />
+<meta property="og:site_name" content="Geon’s Blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-03-16T00:00:00-05:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="So you want to code Collaborative Filtering" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-03-16T00:00:00-05:00","datePublished":"2022-03-16T00:00:00-05:00","description":"The DunGeon that holds ipynbs","headline":"So you want to code Collaborative Filtering","mainEntityOfPage":{"@type":"WebPage","@id":"https://geon-youn.github.io/DunGeon/2022/03/16/Collab.html"},"url":"https://geon-youn.github.io/DunGeon/2022/03/16/Collab.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/DunGeon/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://geon-youn.github.io/DunGeon/feed.xml" title="Geon's Blog" /><link rel="shortcut icon" type="image/x-icon" href="/DunGeon/images/icon.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/DunGeon/">Geon&#39;s Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/DunGeon/about/">About Me</a><a class="page-link" href="/DunGeon/search/">Search</a><a class="page-link" href="/DunGeon/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">So you want to code Collaborative Filtering</h1><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-03-16T00:00:00-05:00" itemprop="datePublished">
+        Mar 16, 2022
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      14 min read
+    
+</span></p>
+
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-justify-center">
+          <div class="px-2">
+
+    <a href="https://github.com/geon-youn/DunGeon/tree/master/_notebooks/2022-03-16-Collab.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/DunGeon/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/geon-youn/DunGeon/master?filepath=_notebooks%2F2022-03-16-Collab.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/DunGeon/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/geon-youn/DunGeon/blob/master/_notebooks/2022-03-16-Collab.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/DunGeon/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+          <div class="px-2">
+  <a href="https://deepnote.com/launch?url=https%3A%2F%2Fgithub.com%2Fgeon-youn%2FDunGeon%2Fblob%2Fmaster%2F_notebooks%2F2022-03-16-Collab.ipynb" target="_blank">
+      <img class="notebook-badge-image" src="/DunGeon/assets/badges/deepnote.svg" alt="Launch in Deepnote"/>
+  </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2022-03-16-Collab.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Hopefully you've read my <a href="https://geon-youn.github.io/DunGeon/2022/03/12/Collaborative-Filtering.html">last blog post</a> which explains everything I'm going to be doing in today's blog. We're going to be coding a collaborative filtering model in two ways: by probabilistic matrix factorization and then through deep learning. If you'd like to learn how deep learning works, check out my <a href="https://geon-youn.github.io/DunGeon/2022/03/07/What-Is-Deep-Learning.html">other blog post</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>First, we'll download a subset of the MovieLens dataset, which contains 100,000 of the 25-million recommendation dataset. The main reason being that I'm using the GPUs on Colab and it would take too long to train a model with the full dataset.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">fastai.collab</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">fastai.tabular.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">untar_data</span><span class="p">(</span><span class="n">URLs</span><span class="o">.</span><span class="n">ML_100k</span><span class="p">)</span>
+<span class="n">Path</span><span class="o">.</span><span class="n">BASE_PATH</span> <span class="o">=</span> <span class="n">path</span>
+<span class="n">path</span><span class="o">.</span><span class="n">ls</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+    <div>
+      <progress value="4931584" class="" max="4924029" style="width:300px; height:20px; vertical-align: middle;"></progress>
+      100.15% [4931584/4924029 00:00&lt;00:00]
+    </div>
+    
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(#23) [Path(&#39;ua.test&#39;),Path(&#39;u.item&#39;),Path(&#39;u2.base&#39;),Path(&#39;u4.test&#39;),Path(&#39;u.user&#39;),Path(&#39;u.genre&#39;),Path(&#39;u.occupation&#39;),Path(&#39;u1.test&#39;),Path(&#39;u5.base&#39;),Path(&#39;u2.test&#39;)...]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>And we can read the README file using the <code>cat</code> command:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="err">!</span><span class="n">cat</span> <span class="p">{</span><span class="n">path</span><span class="p">}</span><span class="o">/</span><span class="n">README</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>SUMMARY &amp; USAGE LICENSE
+=============================================
+
+MovieLens data sets were collected by the GroupLens Research Project
+at the University of Minnesota.
+ 
+This data set consists of:
+	* 100,000 ratings (1-5) from 943 users on 1682 movies. 
+	* Each user has rated at least 20 movies. 
+        * Simple demographic info for the users (age, gender, occupation, zip)
+
+The data was collected through the MovieLens web site
+(movielens.umn.edu) during the seven-month period from September 19th, 
+1997 through April 22nd, 1998. This data has been cleaned up - users
+who had less than 20 ratings or did not have complete demographic
+information were removed from this data set. Detailed descriptions of
+the data file can be found at the end of this file.
+
+Neither the University of Minnesota nor any of the researchers
+involved can guarantee the correctness of the data, its suitability
+for any particular purpose, or the validity of results based on the
+use of the data set.  The data set may be used for any research
+purposes under the following conditions:
+
+     * The user may not state or imply any endorsement from the
+       University of Minnesota or the GroupLens Research Group.
+
+     * The user must acknowledge the use of the data set in
+       publications resulting from the use of the data set
+       (see below for citation information).
+
+     * The user may not redistribute the data without separate
+       permission.
+
+     * The user may not use this information for any commercial or
+       revenue-bearing purposes without first obtaining permission
+       from a faculty member of the GroupLens Research Project at the
+       University of Minnesota.
+
+If you have any further questions or comments, please contact GroupLens
+&lt;grouplens-info@cs.umn.edu&gt;. 
+
+CITATION
+==============================================
+
+To acknowledge use of the dataset in publications, please cite the 
+following paper:
+
+F. Maxwell Harper and Joseph A. Konstan. 2015. The MovieLens Datasets:
+History and Context. ACM Transactions on Interactive Intelligent
+Systems (TiiS) 5, 4, Article 19 (December 2015), 19 pages.
+DOI=http://dx.doi.org/10.1145/2827872
+
+
+ACKNOWLEDGEMENTS
+==============================================
+
+Thanks to Al Borchers for cleaning up this data and writing the
+accompanying scripts.
+
+PUBLISHED WORK THAT HAS USED THIS DATASET
+==============================================
+
+Herlocker, J., Konstan, J., Borchers, A., Riedl, J.. An Algorithmic
+Framework for Performing Collaborative Filtering. Proceedings of the
+1999 Conference on Research and Development in Information
+Retrieval. Aug. 1999.
+
+FURTHER INFORMATION ABOUT THE GROUPLENS RESEARCH PROJECT
+==============================================
+
+The GroupLens Research Project is a research group in the Department
+of Computer Science and Engineering at the University of Minnesota.
+Members of the GroupLens Research Project are involved in many
+research projects related to the fields of information filtering,
+collaborative filtering, and recommender systems. The project is lead
+by professors John Riedl and Joseph Konstan. The project began to
+explore automated collaborative filtering in 1992, but is most well
+known for its world wide trial of an automated collaborative filtering
+system for Usenet news in 1996.  The technology developed in the
+Usenet trial formed the base for the formation of Net Perceptions,
+Inc., which was founded by members of GroupLens Research. Since then
+the project has expanded its scope to research overall information
+filtering solutions, integrating in content-based methods as well as
+improving current collaborative filtering technology.
+
+Further information on the GroupLens Research project, including
+research publications, can be found at the following web site:
+        
+        http://www.grouplens.org/
+
+GroupLens Research currently operates a movie recommender based on
+collaborative filtering:
+
+        http://www.movielens.org/
+
+DETAILED DESCRIPTIONS OF DATA FILES
+==============================================
+
+Here are brief descriptions of the data.
+
+ml-data.tar.gz   -- Compressed tar file.  To rebuild the u data files do this:
+                gunzip ml-data.tar.gz
+                tar xvf ml-data.tar
+                mku.sh
+
+u.data     -- The full u data set, 100000 ratings by 943 users on 1682 items.
+              Each user has rated at least 20 movies.  Users and items are
+              numbered consecutively from 1.  The data is randomly
+              ordered. This is a tab separated list of 
+	         user id | item id | rating | timestamp. 
+              The time stamps are unix seconds since 1/1/1970 UTC   
+
+u.info     -- The number of users, items, and ratings in the u data set.
+
+u.item     -- Information about the items (movies); this is a tab separated
+              list of
+              movie id | movie title | release date | video release date |
+              IMDb URL | unknown | Action | Adventure | Animation |
+              Children&#39;s | Comedy | Crime | Documentary | Drama | Fantasy |
+              Film-Noir | Horror | Musical | Mystery | Romance | Sci-Fi |
+              Thriller | War | Western |
+              The last 19 fields are the genres, a 1 indicates the movie
+              is of that genre, a 0 indicates it is not; movies can be in
+              several genres at once.
+              The movie ids are the ones used in the u.data data set.
+
+u.genre    -- A list of the genres.
+
+u.user     -- Demographic information about the users; this is a tab
+              separated list of
+              user id | age | gender | occupation | zip code
+              The user ids are the ones used in the u.data data set.
+
+u.occupation -- A list of the occupations.
+
+u1.base    -- The data sets u1.base and u1.test through u5.base and u5.test
+u1.test       are 80%/20% splits of the u data into training and test data.
+u2.base       Each of u1, ..., u5 have disjoint test sets; this if for
+u2.test       5 fold cross validation (where you repeat your experiment
+u3.base       with each training and test set and average the results).
+u3.test       These data sets can be generated from u.data by mku.sh.
+u4.base
+u4.test
+u5.base
+u5.test
+
+ua.base    -- The data sets ua.base, ua.test, ub.base, and ub.test
+ua.test       split the u data into a training set and a test set with
+ub.base       exactly 10 ratings per user in the test set.  The sets
+ub.test       ua.test and ub.test are disjoint.  These data sets can
+              be generated from u.data by mku.sh.
+
+allbut.pl  -- The script that generates training and test sets where
+              all but n of a users ratings are in the training data.
+
+mku.sh     -- A shell script to generate all the u data sets from u.data.
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Which tells us that <code>u.data</code> contains the full data set, which is 100,000 ratings by 943 users on 1682 items, where each user rated at least 20 movies. The data is tab separated with column names: <code>user id</code>, <code>item/movie id</code>, <code>rating</code>, and <code>timestamp</code>. So, let's try reading the csv:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">ratings</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+    <span class="n">path</span><span class="o">/</span><span class="s1">&#39;u.data&#39;</span><span class="p">,</span>
+    <span class="n">delimiter</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;movie&#39;</span><span class="p">,</span> <span class="s1">&#39;rating&#39;</span><span class="p">,</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">])</span>
+<span class="n">ratings</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+
+  <div id="df-050f4356-a7ba-4ebe-9bc5-98fbf720cd69">
+    <div class="colab-df-container">
+      <div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>user</th>
+      <th>movie</th>
+      <th>rating</th>
+      <th>timestamp</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>196</td>
+      <td>242</td>
+      <td>3</td>
+      <td>881250949</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>186</td>
+      <td>302</td>
+      <td>3</td>
+      <td>891717742</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>22</td>
+      <td>377</td>
+      <td>1</td>
+      <td>878887116</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>244</td>
+      <td>51</td>
+      <td>2</td>
+      <td>880606923</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>166</td>
+      <td>346</td>
+      <td>1</td>
+      <td>886397596</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+      <button class="colab-df-convert" onclick="convertToInteractive('df-050f4356-a7ba-4ebe-9bc5-98fbf720cd69')" title="Convert this dataframe to an interactive table." style="display:none;">
+        
+  &lt;svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px"&gt;
+    <path d="M0 0h24v24H0V0z" fill="none" />
+    <path d="M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z" /><path d="M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z" />
+  &lt;/svg&gt;
+      </button>
+      
+  <style>
+    .colab-df-container {
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+      <script>
+        const buttonEl =
+          document.querySelector('#df-050f4356-a7ba-4ebe-9bc5-98fbf720cd69 button.colab-df-convert');
+        buttonEl.style.display =
+          google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+        async function convertToInteractive(key) {
+          const element = document.querySelector('#df-050f4356-a7ba-4ebe-9bc5-98fbf720cd69');
+          const dataTable =
+            await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                     [key], {});
+          if (!dataTable) return;
+
+          const docLinkHtml = 'Like what you see? Visit the ' +
+            '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+            + ' to learn more about interactive tables.';
+          element.innerHTML = '';
+          dataTable['output_type'] = 'display_data';
+          await google.colab.output.renderOutput(dataTable, element);
+          const docLink = document.createElement('div');
+          docLink.innerHTML = docLinkHtml;
+          element.appendChild(docLink);
+        }
+      </script>
+    </div>
+  </div>
+  
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We'd like to know the actual movie name instead of the movie ID, so we can also read the <code>u.item</code> file (although it says it's tab separated, it's actually pipe separated):</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">movies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+    <span class="n">path</span><span class="o">/</span><span class="s1">&#39;u.item&#39;</span><span class="p">,</span>
+    <span class="n">delimiter</span> <span class="o">=</span> <span class="s1">&#39;|&#39;</span><span class="p">,</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">usecols</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;movie&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">],</span>
+    <span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;latin-1&#39;</span>
+    <span class="p">)</span>
+<span class="n">movies</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+
+  <div id="df-1ba93b8d-722d-40bb-a4e8-01f341f2ae0c">
+    <div class="colab-df-container">
+      <div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>movie</th>
+      <th>title</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>Toy Story (1995)</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>GoldenEye (1995)</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>Four Rooms (1995)</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>Get Shorty (1995)</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>Copycat (1995)</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+      <button class="colab-df-convert" onclick="convertToInteractive('df-1ba93b8d-722d-40bb-a4e8-01f341f2ae0c')" title="Convert this dataframe to an interactive table." style="display:none;">
+        
+  &lt;svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px"&gt;
+    <path d="M0 0h24v24H0V0z" fill="none" />
+    <path d="M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z" /><path d="M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z" />
+  &lt;/svg&gt;
+      </button>
+      
+  <style>
+    .colab-df-container {
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+      <script>
+        const buttonEl =
+          document.querySelector('#df-1ba93b8d-722d-40bb-a4e8-01f341f2ae0c button.colab-df-convert');
+        buttonEl.style.display =
+          google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+        async function convertToInteractive(key) {
+          const element = document.querySelector('#df-1ba93b8d-722d-40bb-a4e8-01f341f2ae0c');
+          const dataTable =
+            await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                     [key], {});
+          if (!dataTable) return;
+
+          const docLinkHtml = 'Like what you see? Visit the ' +
+            '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+            + ' to learn more about interactive tables.';
+          element.innerHTML = '';
+          dataTable['output_type'] = 'display_data';
+          await google.colab.output.renderOutput(dataTable, element);
+          const docLink = document.createElement('div');
+          docLink.innerHTML = docLinkHtml;
+          element.appendChild(docLink);
+        }
+      </script>
+    </div>
+  </div>
+  
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Then, we can merge the two tables together:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">ratings</span> <span class="o">=</span> <span class="n">ratings</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">movies</span><span class="p">)</span>
+<span class="n">ratings</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+
+  <div id="df-a729b62c-58a9-4f90-9ee7-237b0509328f">
+    <div class="colab-df-container">
+      <div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>user</th>
+      <th>movie</th>
+      <th>rating</th>
+      <th>timestamp</th>
+      <th>title</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>196</td>
+      <td>242</td>
+      <td>3</td>
+      <td>881250949</td>
+      <td>Kolya (1996)</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>63</td>
+      <td>242</td>
+      <td>3</td>
+      <td>875747190</td>
+      <td>Kolya (1996)</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>226</td>
+      <td>242</td>
+      <td>5</td>
+      <td>883888671</td>
+      <td>Kolya (1996)</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>154</td>
+      <td>242</td>
+      <td>3</td>
+      <td>879138235</td>
+      <td>Kolya (1996)</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>306</td>
+      <td>242</td>
+      <td>5</td>
+      <td>876503793</td>
+      <td>Kolya (1996)</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+      <button class="colab-df-convert" onclick="convertToInteractive('df-a729b62c-58a9-4f90-9ee7-237b0509328f')" title="Convert this dataframe to an interactive table." style="display:none;">
+        
+  &lt;svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px"&gt;
+    <path d="M0 0h24v24H0V0z" fill="none" />
+    <path d="M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z" /><path d="M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z" />
+  &lt;/svg&gt;
+      </button>
+      
+  <style>
+    .colab-df-container {
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+      <script>
+        const buttonEl =
+          document.querySelector('#df-a729b62c-58a9-4f90-9ee7-237b0509328f button.colab-df-convert');
+        buttonEl.style.display =
+          google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+        async function convertToInteractive(key) {
+          const element = document.querySelector('#df-a729b62c-58a9-4f90-9ee7-237b0509328f');
+          const dataTable =
+            await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                     [key], {});
+          if (!dataTable) return;
+
+          const docLinkHtml = 'Like what you see? Visit the ' +
+            '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+            + ' to learn more about interactive tables.';
+          element.innerHTML = '';
+          dataTable['output_type'] = 'display_data';
+          await google.colab.output.renderOutput(dataTable, element);
+          const docLink = document.createElement('div');
+          docLink.innerHTML = docLinkHtml;
+          element.appendChild(docLink);
+        }
+      </script>
+    </div>
+  </div>
+  
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Then, we build our <code>DataLoaders</code> object, which will have our training and validation <code>DataLoader</code>s (which produces our mini-batches of <code>Dataset</code>s).</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">dls</span> <span class="o">=</span> <span class="n">CollabDataLoaders</span><span class="o">.</span><span class="n">from_df</span><span class="p">(</span><span class="n">ratings</span><span class="p">,</span> <span class="n">item_name</span> <span class="o">=</span> <span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="n">bs</span> <span class="o">=</span> <span class="mi">64</span><span class="p">)</span>
+<span class="n">dls</span><span class="o">.</span><span class="n">show_batch</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>user</th>
+      <th>title</th>
+      <th>rating</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>542</td>
+      <td>My Left Foot (1989)</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>422</td>
+      <td>Event Horizon (1997)</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>311</td>
+      <td>African Queen, The (1951)</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>595</td>
+      <td>Face/Off (1997)</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>617</td>
+      <td>Evil Dead II (1987)</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>158</td>
+      <td>Jurassic Park (1993)</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>836</td>
+      <td>Chasing Amy (1997)</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>474</td>
+      <td>Emma (1996)</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>466</td>
+      <td>Jackie Chan's First Strike (1996)</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>554</td>
+      <td>Scream (1996)</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>And then we create our model, which will contain our <strong>embeddings</strong>. We can't just index into a matrix for a deep learning model since we have to calculate the derivative for each operation we do. Instead, we use <strong>one-hot encoding</strong>, which is a vector that has a <code>1</code> in the places that we want to index in. For example, if we have an array <code>[0, 1, 2, 3]</code> and we want the element in the 2nd index (<code>2</code>), we would matrix multiply <code>[0, 0, 1, 0]</code> to the array's transpose:
+
+$$\begin{bmatrix}0 &amp; 1 &amp; 2 &amp; 3\end{bmatrix}^T\begin{bmatrix}0&amp;0&amp;1&amp;0\end{bmatrix}=\begin{bmatrix}0\\1\\2\\3\end{bmatrix}\begin{bmatrix}0&amp;0&amp;1&amp;0\end{bmatrix}=\begin{bmatrix}2\end{bmatrix}$$
+</p>
+<p>But, storing and using one-hot encoding vectors are pretty time and memory consuming, so we use a special layer in most deep learning libraries (like PyTorch) called embedding. Embedding is mimicking the process of multiplying by a one-hot-encoded matrix, but it just indexes into a matrix using an integer while having its derivative calculated in a way such that it's identical to what it would've been if a matrix multiplication was done with a one-hot-encoded vector.</p>
+<blockquote><p>Optimizers need to be able to get all the parameters from a model, so all embedding does is randomly initialize a matrix and wrap it around the <code>nn.Parameter</code> class which tells PyTorch that it's a trainable parameter.</p>
+</blockquote>
+<p>When we refer to <em>an</em> embedding, that's the embedding matrix, which is the thing that's multiplied by the one-hot-encoded matrix or the thing that's being indexed into. So, an embedding matrix in this case, is our latent factors (and biases).</p>
+<p>When creating a neural network model with PyTorch, we have to inherit from their <code>Module</code> class which contains the essentials; we just have to define <code>__init__</code> (called dunder init) to initialize our model and <code>forward</code> which is essentially the "predict" step in the model. <code>forward</code> accepts the parameters of a mini-batch and returns a prediction.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">n_users</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dls</span><span class="o">.</span><span class="n">classes</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">])</span>
+<span class="n">n_items</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dls</span><span class="o">.</span><span class="n">classes</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">])</span>
+<span class="n">n_factors</span> <span class="o">=</span> <span class="mi">50</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="k">class</span> <span class="nc">DotProduct</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span><span class="p">,</span> <span class="n">n_factors</span><span class="p">,</span> <span class="n">y_range</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)):</span>
+            <span class="c1"># User latent factors and biases</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_factors</span> <span class="o">=</span> <span class="n">Embedding</span><span class="p">(</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_factors</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">user_bias</span>    <span class="o">=</span> <span class="n">Embedding</span><span class="p">(</span><span class="n">n_users</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># Item latent factors and biases</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item_factors</span> <span class="o">=</span> <span class="n">Embedding</span><span class="p">(</span><span class="n">n_items</span><span class="p">,</span> <span class="n">n_factors</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">item_bias</span>    <span class="o">=</span> <span class="n">Embedding</span><span class="p">(</span><span class="n">n_items</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># Range for our predictions</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y_range</span>      <span class="o">=</span> <span class="n">y_range</span>
+
+        <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+            <span class="c1"># Get first column (the users) from input</span>
+            <span class="n">users</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_factors</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+            <span class="c1"># Get second column (the titles) from input</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_factors</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
+            <span class="c1"># Calculate the dot product </span>
+            <span class="n">dot_prod</span> <span class="o">=</span> <span class="p">(</span><span class="n">users</span> <span class="o">*</span> <span class="n">items</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># Add biases to the dot product</span>
+            <span class="c1"># We add the user biases and the item biases together</span>
+            <span class="n">dot_prod</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_bias</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_bias</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
+            <span class="c1"># Return the prediction in the chosen range</span>
+            <span class="c1"># Sigmoid is a function that returns a value between 0 and 1</span>
+            <span class="c1"># We can multiply it by (hi - lo) and add lo to get a value</span>
+            <span class="c1"># between lo and hi, which is what sigmoid_range does</span>
+            <span class="k">return</span> <span class="n">sigmoid_range</span><span class="p">(</span><span class="n">dot_prod</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">y_range</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now that we have our model, we can create an object with it and pass it into a <code>Learner</code> and train it.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">DotProduct</span><span class="p">(</span><span class="n">n_users</span><span class="p">,</span> <span class="n">n_items</span><span class="p">,</span> <span class="n">n_factors</span><span class="p">)</span>
+<span class="n">learn</span> <span class="o">=</span> <span class="n">Learner</span><span class="p">(</span><span class="n">dls</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">loss_func</span> <span class="o">=</span> <span class="n">MSELossFlat</span><span class="p">())</span>
+<span class="c1"># We also use weight decay since we have bias in our model</span>
+<span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">5e-3</span><span class="p">,</span> <span class="n">wd</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: left;">
+      <th>epoch</th>
+      <th>train_loss</th>
+      <th>valid_loss</th>
+      <th>time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0.941400</td>
+      <td>0.941900</td>
+      <td>00:09</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>0.847874</td>
+      <td>0.877467</td>
+      <td>00:08</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>0.719121</td>
+      <td>0.835374</td>
+      <td>00:07</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>0.594287</td>
+      <td>0.824023</td>
+      <td>00:07</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>0.483335</td>
+      <td>0.824634</td>
+      <td>00:07</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>And, we don't need to define our own <code>DotProduct</code> class. We can instead use fast.ai's <code>collab_learner</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span> <span class="o">=</span> <span class="n">collab_learner</span><span class="p">(</span><span class="n">dls</span><span class="p">,</span> <span class="n">n_factors</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span> <span class="n">y_range</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">))</span>
+<span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">5e-3</span><span class="p">,</span> <span class="n">wd</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: left;">
+      <th>epoch</th>
+      <th>train_loss</th>
+      <th>valid_loss</th>
+      <th>time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0.940803</td>
+      <td>0.954099</td>
+      <td>00:08</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>0.846296</td>
+      <td>0.874175</td>
+      <td>00:07</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>0.741423</td>
+      <td>0.838990</td>
+      <td>00:07</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>0.590897</td>
+      <td>0.822672</td>
+      <td>00:07</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>0.492853</td>
+      <td>0.823269</td>
+      <td>00:07</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>And we see the results are similar since the model used by <code>collab_learner</code> is essentially equivalent:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="c1"># 50 latent factors for users and items</span>
+<span class="c1"># bias for users and items</span>
+<span class="n">learn</span><span class="o">.</span><span class="n">model</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>EmbeddingDotBias(
+  (u_weight): Embedding(944, 50)
+  (i_weight): Embedding(1665, 50)
+  (u_bias): Embedding(944, 1)
+  (i_bias): Embedding(1665, 1)
+)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To turn our architecture into a deep learning model, we need a neural network. With a neural network, we start with a large matrix that we pass through layers. Instead of taking the dot product, we concatenate the latent factors from the users and the items. So, we also don't need the same number of latent factors for users as for items. To get the number of latent factors, we can use fast.ai's <code>get_emb_sz</code> function on our <code>DataLoaders</code>, which will give us recommended latent factors:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">embs</span> <span class="o">=</span> <span class="n">get_emb_sz</span><span class="p">(</span><span class="n">dls</span><span class="p">)</span>
+<span class="n">embs</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(944, 74), (1665, 102)]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>And, we can rewrite our <code>DotProduct</code> class like so:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="k">class</span> <span class="nc">SimpleNet</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_sz</span><span class="p">,</span> <span class="n">item_sz</span><span class="p">,</span> <span class="n">y_range</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">),</span> <span class="n">n_acts</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
+        <span class="c1"># nn.Linear implements bias implicitly, so we</span>
+        <span class="c1"># don&#39;t need to define our own bias.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user_factors</span> <span class="o">=</span> <span class="n">Embedding</span><span class="p">(</span><span class="o">*</span><span class="n">user_sz</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">item_factors</span> <span class="o">=</span> <span class="n">Embedding</span><span class="p">(</span><span class="o">*</span><span class="n">item_sz</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span>       <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">user_sz</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">item_sz</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">n_acts</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">n_acts</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_range</span>      <span class="o">=</span> <span class="n">y_range</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">embs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_factors</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]),</span><span class="bp">self</span><span class="o">.</span><span class="n">item_factors</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">x</span>    <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">embs</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">sigmoid_range</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">y_range</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Then, we can put it in a <code>Learner</code> and train our deep learning model:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">SimpleNet</span><span class="p">(</span><span class="o">*</span><span class="n">embs</span><span class="p">)</span>
+<span class="n">learn</span> <span class="o">=</span> <span class="n">Learner</span><span class="p">(</span><span class="n">dls</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">loss_func</span> <span class="o">=</span> <span class="n">MSELossFlat</span><span class="p">())</span>
+<span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">5e-3</span><span class="p">,</span> <span class="n">wd</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: left;">
+      <th>epoch</th>
+      <th>train_loss</th>
+      <th>valid_loss</th>
+      <th>time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0.942289</td>
+      <td>0.957183</td>
+      <td>00:07</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>0.918996</td>
+      <td>0.915120</td>
+      <td>00:07</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>0.854367</td>
+      <td>0.902296</td>
+      <td>00:07</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>0.820374</td>
+      <td>0.877131</td>
+      <td>00:07</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>0.827481</td>
+      <td>0.877810</td>
+      <td>00:07</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>And, like how we didn't need to define our own <code>DotProduct</code> class and use <code>collab_learner</code> instead, we can also do the same with <code>SimpleNet</code>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="c1"># We just have to enable the use_nn parameter and</span>
+<span class="c1"># give it layers</span>
+<span class="n">learn</span> <span class="o">=</span> <span class="n">collab_learner</span><span class="p">(</span><span class="n">dls</span><span class="p">,</span> <span class="n">use_nn</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">y_range</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">),</span> <span class="n">layers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">50</span><span class="p">])</span>
+<span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">5e-3</span><span class="p">,</span> <span class="n">wd</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: left;">
+      <th>epoch</th>
+      <th>train_loss</th>
+      <th>valid_loss</th>
+      <th>time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>1.018050</td>
+      <td>0.979968</td>
+      <td>00:13</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>0.906580</td>
+      <td>0.922872</td>
+      <td>00:08</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>0.909671</td>
+      <td>0.890887</td>
+      <td>00:08</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>0.814160</td>
+      <td>0.870163</td>
+      <td>00:08</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>0.802491</td>
+      <td>0.869587</td>
+      <td>00:09</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="So-you-want-to-interpret-the-results">So you want to interpret the results<a class="anchor-link" href="#So-you-want-to-interpret-the-results"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now that you've trained a model, there's several ways to interpret your results.</p>
+<p>First, we can look at the biases:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="c1"># First, take the biases and put them into</span>
+<span class="c1"># a one-dimensional tensor that we can sort</span>
+<span class="n">item_bias</span> <span class="o">=</span> <span class="n">learn</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item_bias</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<span class="c1"># argsort returns a list of indexes that would</span>
+<span class="c1"># sort the tensor</span>
+<span class="n">idxs_bot</span>  <span class="o">=</span> <span class="n">item_bias</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[:</span><span class="mi">5</span><span class="p">]</span>
+<span class="n">idxs_top</span>  <span class="o">=</span> <span class="n">item_bias</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">descending</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)[:</span><span class="mi">5</span><span class="p">]</span>
+<span class="c1"># display the titles of the 5 &quot;worst&quot; movies</span>
+<span class="c1"># and the 5 &quot;best&quot; movies, respectively</span>
+<span class="p">[</span><span class="n">dls</span><span class="o">.</span><span class="n">classes</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idxs_bot</span><span class="p">],[</span><span class="n">dls</span><span class="o">.</span><span class="n">classes</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idxs_top</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>([&#39;Children of the Corn: The Gathering (1996)&#39;,
+  &#39;Lawnmower Man 2: Beyond Cyberspace (1996)&#39;,
+  &#39;Crow: City of Angels, The (1996)&#39;,
+  &#39;Beautician and the Beast, The (1997)&#39;,
+  &#39;Robocop 3 (1993)&#39;],
+ [&#39;Titanic (1997)&#39;,
+  &#39;L.A. Confidential (1997)&#39;,
+  &#39;Shawshank Redemption, The (1994)&#39;,
+  &#34;Schindler&#39;s List (1993)&#34;,
+  &#39;Silence of the Lambs, The (1991)&#39;])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Then, we can find the distances:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">item_factors</span> <span class="o">=</span> <span class="n">learn</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">item_factors</span><span class="o">.</span><span class="n">weight</span>
+<span class="n">idx</span> <span class="o">=</span> <span class="n">dls</span><span class="o">.</span><span class="n">classes</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">o2i</span><span class="p">[</span><span class="s1">&#39;Toy Story (1995)&#39;</span><span class="p">]</span>
+<span class="n">distances</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CosineSimilarity</span><span class="p">()(</span><span class="n">item_factors</span><span class="p">,</span> <span class="n">item_factors</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="kc">None</span><span class="p">])</span>
+<span class="n">idx</span> <span class="o">=</span> <span class="n">distances</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">descending</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
+<span class="n">dls</span><span class="o">.</span><span class="n">classes</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(#4) [&#39;That Thing You Do! (1996)&#39;,&#39;Abyss, The (1989)&#39;,&#39;Wizard of Oz, The (1939)&#39;,&#39;Aladdin (1992)&#39;]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So, the four movies in the data set that are most similar to <code>Toy Story</code> are the ones above.</p>
+<p>In the next few blogs, I'll be talking more about deep and machine learning with tabular data.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><a class="u-url" href="/DunGeon/2022/03/16/Collab.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/DunGeon/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/DunGeon/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/DunGeon/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>The DunGeon that holds ipynbs</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/geon-youn" target="_blank" title="geon-youn"><svg class="svg-icon grey"><use xlink:href="/DunGeon/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/griolu" target="_blank" title="griolu"><svg class="svg-icon grey"><use xlink:href="/DunGeon/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
