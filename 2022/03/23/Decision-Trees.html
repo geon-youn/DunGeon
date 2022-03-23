@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Decisions grow on trees | Geon’s Blog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Decisions grow on trees" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="The DunGeon that holds ipynbs" />
+<meta property="og:description" content="The DunGeon that holds ipynbs" />
+<link rel="canonical" href="https://geon-youn.github.io/DunGeon/2022/03/23/Decision-Trees.html" />
+<meta property="og:url" content="https://geon-youn.github.io/DunGeon/2022/03/23/Decision-Trees.html" />
+<meta property="og:site_name" content="Geon’s Blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-03-23T00:00:00-05:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Decisions grow on trees" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-03-23T00:00:00-05:00","datePublished":"2022-03-23T00:00:00-05:00","description":"The DunGeon that holds ipynbs","headline":"Decisions grow on trees","mainEntityOfPage":{"@type":"WebPage","@id":"https://geon-youn.github.io/DunGeon/2022/03/23/Decision-Trees.html"},"url":"https://geon-youn.github.io/DunGeon/2022/03/23/Decision-Trees.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/DunGeon/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://geon-youn.github.io/DunGeon/feed.xml" title="Geon's Blog" /><link rel="shortcut icon" type="image/x-icon" href="/DunGeon/images/icon.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/DunGeon/">Geon&#39;s Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/DunGeon/about/">About Me</a><a class="page-link" href="/DunGeon/search/">Search</a><a class="page-link" href="/DunGeon/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Decisions grow on trees</h1><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-03-23T00:00:00-05:00" itemprop="datePublished">
+        Mar 23, 2022
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      15 min read
+    
+</span></p>
+
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-justify-center">
+          <div class="px-2">
+
+    <a href="https://github.com/geon-youn/DunGeon/tree/master/_notebooks/2022-03-23-Decision-Trees.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/DunGeon/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/geon-youn/DunGeon/master?filepath=_notebooks%2F2022-03-23-Decision-Trees.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/DunGeon/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/geon-youn/DunGeon/blob/master/_notebooks/2022-03-23-Decision-Trees.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/DunGeon/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+          <div class="px-2">
+  <a href="https://deepnote.com/launch?url=https%3A%2F%2Fgithub.com%2Fgeon-youn%2FDunGeon%2Fblob%2Fmaster%2F_notebooks%2F2022-03-23-Decision-Trees.ipynb" target="_blank">
+      <img class="notebook-badge-image" src="/DunGeon/assets/badges/deepnote.svg" alt="Launch in Deepnote"/>
+  </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2022-03-23-Decision-Trees.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Our first method for training structured tabular data is to use ensembles of decision trees.</p>
+<hr />
+<p><strong>Decision trees</strong>: a decision tree asks a series of yes/no questions about the data. After each question, the data at that part splits between yes/no. After one or more questions, predictions can be formed by finding the group the data is part of at the bottom of the tree and returning the average value of the targets in that group.</p>
+<hr />
+<p>To train a decision tree, we follow a greedy approach with six steps:</p>
+<ol>
+<li>Loop through each column of the data set.</li>
+<li>For each column, loop through each possible <strong>level</strong> of that column.</li>
+</ol>
+<hr />
+<p><strong>Level</strong>: for most continuous and some categorical variables, when we say levels, we're referring to variables that can be ordered. For example, sizes like "Small" &lt; "Medium" &lt; "Large". For other categorical variables, we refer to the actual values.</p>
+<hr />
+<ol>
+<li>Try splitting the data into two groups, based on whether they're greater than or less than that value (or equal to or not equal to for other categorical variables). </li>
+<li>Find the average prediction for each of those two groups and use your metric to see how close that is to the actual value of each of the items in that group. </li>
+<li>After looping through all the possible columns and levels for each column, pick the split point that gave the best prediction. </li>
+<li>Now, we have two groups for our data set. Treat each of them as new data sets and repeat from step 1 until each group reaches your minimum size threshold. </li>
+</ol>
+<p>With decision trees, you have to be careful with how many leaf nodes you end up with. If you have too many (close to the number of data entries), then your model will overfit.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Overfitting?-No-problem.">Overfitting? No problem.<a class="anchor-link" href="#Overfitting?-No-problem."> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>One year before his retirement, Leo Breiman published a paper on "bagging". Instead of training on the entire training set (or mini-batches), you</p>
+<ol>
+<li>randomly choose a subset of the rows of your data, </li>
+<li>train a model using this subset, </li>
+<li>save the model, and </li>
+<li>train more models on different subsets of the data. </li>
+</ol>
+<p>Eventually, you end up with a number of models. To make a prediction, you predict using all of the models and take the average.</p>
+<p>Each of the models have errors since they're not trained on the full training set, but since different models have different errors (and these errors aren't correlated with each other; i.e., they're independent) the errors end up cancelling out when we take the average.</p>
+<p>Seven years later, Breiman also coined "random forests" where you apply bagging to decision trees not only by randomly choosing a subset of the <em>rows</em> of your data, but you also randomly choosing a subset of the <em>columns when choosing a split</em> in each decision tree.</p>
+<hr />
+<p><strong>Random forests</strong>: a specific type of an <em>ensemble of decision trees</em>, where bagging is used to combine the results of several decision trees that were trained on random subsets of the rows of the data where each split made on a random subset of the columns of the data.</p>
+<hr />
+<p>Since the errors tend to cancel out, it also means the trees are less susceptible to hyperparameter changes. We can also have as many trees as we want; in fact, the error rate usually decreases as we add more trees.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Interpreting-the-model">Interpreting the model<a class="anchor-link" href="#Interpreting-the-model"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Once we trained our model, if the error rate for the validation set is higher than the training set, we want to make sure it's from generalization (or extrapolation) problems and not overfitting.</p>
+<p><strong>Out-of-bag error</strong> allows us to check if we're overfitting without the need of a validation set. Since each tree in a random forest is trained on a subset of the data, we can form a validation set for each tree as the rows not included in training for that tree.</p>
+<p>What makes out-of-bag error different from validation set error is that the data in the former is within the range of the training set, while the validation set is usually outside of the range; this range is most important for time series data since the validation set should contain data that's in the future compared to the training set.</p>
+<p>So, if our out-of-bag error is lower than the validation set error, then the model is not overfitting and is instead having other problems.</p>
+<p>In general, we want to interpret in our model:</p>
+<ul>
+<li>how confident are we in our predictions for a particular row of data?</li>
+<li>for making our predictions on a specific row of data, what were the most important columns, and how did they influence the prediction?</li>
+<li>which columns are the most important; and which columns can we ignore (remove them from training)?</li>
+<li>which columns are <em>effectively redundant</em> in terms of prediction?</li>
+<li>how do predictions vary as we vary the columns (as in, what kind of relationship do the columns have with the predictions)? </li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Confidence-for-a-prediction-on-a-particular-row-of-data">Confidence for a prediction on a particular row of data<a class="anchor-link" href="#Confidence-for-a-prediction-on-a-particular-row-of-data"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When we want to predict for a particular row of data, we pass the data to each tree in our random forest and take the average of the results. To find the <em>relative</em> confidence of the prediction, we can take the standard deviation of the predictions instead of the average. So, if the standard deviation is high, we should be more wary of the prediction since the trees disagree more than if the standard deviation was low.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Feature-importance">Feature importance<a class="anchor-link" href="#Feature-importance"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It's important to understand <em>how</em> our models are making predictions, not just how accuracte the predictions are.</p>
+<p>To find the importance of each column (feature) in our data, we can loop through each tree and recursively explore each branch. At each branch, look at what column was used for that split and how much the model improved at that split. The improvement, which is weighted by the number of rows in that group is added to the importance score for that column. The importance score is summed across all branches of all trees. Then, you can normalize the scores (so that they sum to 1) and sort them in ascending order to see the least important columns, and by descending order to see the most important columns.</p>
+<p>The "how" is mostly used in production (and not in model training) to see how the data is leading to predictions. To find how each column influenced the prediction, we take a single row of the data and pass it through each of the decision trees in our random forest. At each split point, record how the prediction changes (increases or decreases) compared to the parent node of the tree and add it to the column's score. Then, combine the score for each of the columns and you can see how each column increased or decreased the prediction relative to the parent node of the random forest (which is the average of the average of the target in each row in the batch of rows in the batch of trees in the random forest).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Ignoring-features">Ignoring features<a class="anchor-link" href="#Ignoring-features"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Once you found the importance of each column, you can set a threshold such that you ignore features whose importance scores were lower than that threshold (this is why we normalized the scores).</p>
+<p>Try retraining your model with those columns ignored and you can decide to keep the change (if the accuracy hasn't changed much) or change your threshold (if the accuracy decreased significantly). In any case, it's nicer to train your model with less unimportant columns since you'll be able to train future models on the same data set faster.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Redundant-features">Redundant features<a class="anchor-link" href="#Redundant-features"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To find redundant columns, you want to find how similar each column is to another. To do so, you calculate the <em>rank correlation</em>, where all the values in each column are replaced with their <em>rank</em> relative to other values in the same column (think of it like descending <code>argsort</code>, where you give each row in a specific column the index it would have for the column to be sorted in descending order).Then, the <em>correlation</em> is calculated (kind of like the correlation coefficient $r$, but with rank). Columns with similar rank correlations may be synonyms for each other and one (or more) of them could be removed.</p>
+<p>When removing redundant columns, retrain the model where you remove only one redundant column at a time. Then, try removing them in groups and eventually altogether. The point of this tedious task is to make sure we're not significantly reducing the accuracy of the model. And, some columns, although they seem redundant, may not be redundant and would be important to keep in the model.</p>
+<p>Although not necessary, you should remove unimportant and redundant columns when possible since it'll simplify your model.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Relationship-between-columns-and-predictions">Relationship between columns and predictions<a class="anchor-link" href="#Relationship-between-columns-and-predictions"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To find the relationship between a column and prediction, you could guess that we should have a row where we keep all columns constant except for the column in question.</p>
+<p>But, we can't just take the average of the predictions for a specific level of a column since other variables can change. Instead, we replace every single value in the column with a specific level in the validation set, and record the prediction with the new validation set as the input. Then, we do the same for every other level of that column.</p>
+<p>With these predictions, we can form a line graph with the levels as the x-axis and the predictions as the y-axis. We call this graph a <strong>partial dependence plot</strong>.</p>
+<p>Sometimes, you trained your model and</p>
+<ul>
+<li>your accuraccy is too good to be true, </li>
+<li>some features don't make sense to be predictors, or </li>
+<li><em>the partial dependence plots looks weird</em>. </li>
+</ul>
+<p>If so, your data might have <strong>data leakage</strong> where the training set contains information that wouldn't be available in the data you give at inference (i.e., when using the model in practice and/or your validation set).</p>
+<p>Data leakage are subtleties that give away the correct answer. For example, if you trained a model to predict the weather and the precipitation was in an available column (and/or it was only filled out on rainy days), you bet your model would predict it was "raining" on "rainy days" if there was any precipitation and "sunny" on "sunny days" otherwise. So, when you interpret the model later, you might see really high accuracy, with precipitation being a high predictor.</p>
+<p>In preventing data leakage, train your model first and then look for data leakage (and then clean or reprocess your data); this process is the same with how you would train your model first before performing data cleaning.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="We-can't-always-use-random-forests">We can't always use random forests<a class="anchor-link" href="#We-can't-always-use-random-forests"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With time series data, you usually want to have a model that can generalize to new data and extrapolate accurately. The downside of random forests is that it can only predict within the range of its training data. So, if the value in the validation set is outside of the range of the training set, the accuracy of the random forest will always be low since it can't predict values that high.</p>
+<p>Why might this be the case? A random forest returns a prediction based on the average of the predictions of its decision trees, where each tree predicts the average of the targets in the rows in a leaf node. So, a random forest can never predict a value that's outside of the range of the training set.</p>
+<p>In a general sense, a random forest can't generalize to <strong>out-of-domain data</strong>, so we need to make sure our validation, test, and future data sets contain the same kind of data as our training set.</p>
+<p>To test if there's out-of-(the training set's)-domain data, we can build a random forest that predicts which row is in the validation or training set. To do so, you can concatenate the validation and training set and label the rows by validation or training. Then, through feature importance, if there's a particular column that is more prominent in the validation set, there will be a nonuniform distribution of importance scores.</p>
+<p>Sometimes, you can remove the columns with high feature importance and improve the accuracy of the model since those columns might be related to another column (hence removing redundant columns).</p>
+<p>Removing those columns can also make your model more resilient over time since those columns may be affected by <strong>domain shift</strong> where the data put into the model is significantly different from the training data.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Boosting-instead-of-bagging">Boosting instead of bagging<a class="anchor-link" href="#Boosting-instead-of-bagging"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Instead of random forests, which forms an ensemble of decision trees through <em>bagging</em>, we can also make <strong>gradient boosted machines</strong> which uses <em>boosting</em> instead of bagging.</p>
+<p>Bagging takes the average of the predictions from each decision tree. Boosting, on the other hand, <em>adds</em> the predictions of each decision tree. So, you also train your decision trees differently:</p>
+<ul>
+<li>train a decision tree that <em>underfits</em> the targets of your training set,</li>
+<li>calculate residuals by subtracting the predictions from the targets,</li>
+<li>repeat from the beginning, but train your future models with the residuals as the targets, and </li>
+<li>continue training more trees until you reach a certain maximum or your validation metric gets worse. </li>
+</ul>
+<p>With boosting, we try to minimize the error by having the residuals become as small as possible by underfitting them.</p>
+<p>Unlike random forests, the trees aren't independent of each other so the more trees we train, the more the overall model will overfit the training set.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Free-accuracy-boost">Free accuracy boost<a class="anchor-link" href="#Free-accuracy-boost"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In training a model for tabular data, you can get a boost in accuracy by training a random forest model, doing some analysis like feature importance and partial dependence plots to remove redundant columns, and then training a neural network that uses <em>embeddings for the categorical variables/columns</em>.</p>
+<p>Then, we <em>retrain</em> our random forest model, but instead of creating <em>levels</em> for the categorical variables, we use the <em>embeddings trained by the neural network</em>. So, instead of using a neural network at inference, you can use an improved random forest model.</p>
+<p>The same can be done for gradient boosted machines, and any model that uses categorical variables. Just use the embeddings trained by the neural network.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We covered a machine learning technique called ensembles of decision trees. Here, we mentioned two methods of ensembling: bagging and boosting.</p>
+<p>With bagging, you form a <em>random forest</em> that's quick and easy to train. Random forests are also resistant to hyperparameter changes and since the trees are independent, it's very difficult to overfit as you increase the number of trees.</p>
+<p>With boosting, you form a <em>gradient boosted machine</em> (or <em>gradient boosted decision tree</em>) that are just as fast to train as random forests in theory, but require more hyperparameter tuning and are susceptible to overfitting with the more trees you train since the trees aren't independent of each other. However, gradient boosted machines tend to have higher accuracy than random forests.</p>
+<p>Overall, because of the limitations of decision trees, both random forests and gradient boosted machines can't extrapolate to out-of-domain data. Therefore, you sometimes have to make a <em>neural network</em>.</p>
+<p>Neural networks take the longest to train and require more preprocessing like batch normalization (which also needs to be done at inference). With neural networks, you have to be careful with your hyperparameters since they can lead to overfitting. However, neural networks are great at extrapolating and can have the highest accuracy of the three models.</p>
+<p>With neural networks, you can also use ensembles of decision trees to do some of the preprocessing to make them faster to train. And, once you train a neural network, you can use the embeddings trained by the neural networks as the inputs for the categorical variables in another ensemble of decision trees on the same data set. Doing so tends to produce much higher accuracy.</p>
+<p>If the task doesn't require extrpolation (all future predictions are expected to be in the same range as the training set), then you can use the improved ensemble of decision trees since they will be faster at inference compared to neural networks.</p>
+<p>Moreover, if the response time at inference isn't a major problem, you can even form an ensemble of neural networks and an ensemble of decision trees where you take the average of the predictions of each of the models. Taking the theory behind random forests, since the two (or more) models were trained by two (or more) very different algorithms, the errors each make are independent of each other and will cancel each other out, leading to higher accuracy with less chances of overfitting. Still, it won't make a bad model a good model.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><a class="u-url" href="/DunGeon/2022/03/23/Decision-Trees.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/DunGeon/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/DunGeon/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/DunGeon/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>The DunGeon that holds ipynbs</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/geon-youn" target="_blank" title="geon-youn"><svg class="svg-icon grey"><use xlink:href="/DunGeon/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/griolu" target="_blank" title="griolu"><svg class="svg-icon grey"><use xlink:href="/DunGeon/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
