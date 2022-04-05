@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>So you wanna learn Natural Language Processing | Geon’s Blog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="So you wanna learn Natural Language Processing" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Today we go over natural language processing and how we can solve related problems using deep learning." />
+<meta property="og:description" content="Today we go over natural language processing and how we can solve related problems using deep learning." />
+<link rel="canonical" href="https://geon-youn.github.io/DunGeon/nlp/2022/04/05/Natural-Language-Processing.html" />
+<meta property="og:url" content="https://geon-youn.github.io/DunGeon/nlp/2022/04/05/Natural-Language-Processing.html" />
+<meta property="og:site_name" content="Geon’s Blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-04-05T00:00:00-05:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="So you wanna learn Natural Language Processing" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-04-05T00:00:00-05:00","datePublished":"2022-04-05T00:00:00-05:00","description":"Today we go over natural language processing and how we can solve related problems using deep learning.","headline":"So you wanna learn Natural Language Processing","mainEntityOfPage":{"@type":"WebPage","@id":"https://geon-youn.github.io/DunGeon/nlp/2022/04/05/Natural-Language-Processing.html"},"url":"https://geon-youn.github.io/DunGeon/nlp/2022/04/05/Natural-Language-Processing.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/DunGeon/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://geon-youn.github.io/DunGeon/feed.xml" title="Geon's Blog" /><link rel="shortcut icon" type="image/x-icon" href="/DunGeon/images/icon.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/DunGeon/">Geon&#39;s Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/DunGeon/about/">About Me</a><a class="page-link" href="/DunGeon/search/">Search</a><a class="page-link" href="/DunGeon/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">So you wanna learn Natural Language Processing</h1><p class="page-description">Today we go over natural language processing and how we can solve related problems using deep learning.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-04-05T00:00:00-05:00" itemprop="datePublished">
+        Apr 5, 2022
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      7 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/DunGeon/categories/#NLP">NLP</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-justify-center">
+          <div class="px-2">
+
+    <a href="https://github.com/geon-youn/DunGeon/tree/master/_notebooks/2022-04-05-Natural-Language-Processing.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/DunGeon/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/geon-youn/DunGeon/master?filepath=_notebooks%2F2022-04-05-Natural-Language-Processing.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/DunGeon/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/geon-youn/DunGeon/blob/master/_notebooks/2022-04-05-Natural-Language-Processing.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/DunGeon/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+          <div class="px-2">
+  <a href="https://deepnote.com/launch?url=https%3A%2F%2Fgithub.com%2Fgeon-youn%2FDunGeon%2Fblob%2Fmaster%2F_notebooks%2F2022-04-05-Natural-Language-Processing.ipynb" target="_blank">
+      <img class="notebook-badge-image" src="/DunGeon/assets/badges/deepnote.svg" alt="Launch in Deepnote"/>
+  </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2022-04-05-Natural-Language-Processing.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="How-to-train-your-NLP-model-(ULMFit)">How to train your NLP model (ULMFit)<a class="anchor-link" href="#How-to-train-your-NLP-model-(ULMFit)"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With NLP (natural language processing), we can use transfer learning to train an NLP model using a pretrained language model. By using a pretrained language model, you spend less time, data, and money. But, unlike computer vision, we don't need a model that was trained on similar data.</p>
+<p>A <strong>language model</strong> is a model that was trained to predict the next word given a sequence of text. We train these models through self-supervised learning, where we don't give any labels, just a lot of text. The model can automatically (thus self-supervised) create the labels from the text and be trained on it to develop an understanding of the text's language.</p>
+<p>So, you have a pretrained language model, but it isn't the best idea to train an NLP model right away. The language model probably doesn't know the vocabulary and style (like grammar, formality, etc.) of your problem domain. So, you first fine-tune the model on the corpus of your problem domain, then fine-tune that new model to train your NLP model.</p>
+<p>With this method, we can fine-tune the language model on both the text from the training and validation (and maybe test) sets which will make the new language model very good at predicting the next word for your problem domain.</p>
+<p>This process of having a language model, fine-tuning it on your corpus, and then fine-tuning that for an NLP model is called the <strong>Universal Language Model Fine-tuning (ULMFit)</strong> approach.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Training-your-NLP-(classifier)-model">Training your NLP (classifier) model<a class="anchor-link" href="#Training-your-NLP-(classifier)-model"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In training an NLP model, we first have to fine-tune our language model. To do so, we need to preprocess the text such that it's ready to be put into a model.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Preprocessing-the-text">Preprocessing the text<a class="anchor-link" href="#Preprocessing-the-text"> </a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Text is a categorical variable. And, to put it inside of a neural network, we have to assign them an embedding matrix. This process is the first layer of the neural network: turning a cateogrical variable continuous through an embedding matrix assignment.</p>
+<p>With regular categorical variables, we:</p>
+<ol>
+<li>Make a list of all possible levels of that categorical variable (which we call the <em>vocab</em>).</li>
+<li>Replace each level with its index in the vocab.</li>
+<li>Make an embedding matrix for this categorical variable where each row corresponds to a level.</li>
+<li>Use this embedding matrix as the first layer of a neural network. This layer takes the index $i$ created in step 2 and returns the $i$-th row in the matrix.</li>
+</ol>
+<p>For text, the first step is a little different since there're many ways we can define levels for text. It also works differently for different languages. This process is called <strong>tokenization</strong>, where each item in the vocab is called a <em>token</em>. The second step, where we assign numbers to each <em>token</em> is called <strong>numericalization</strong>.</p>
+<p>When we use a pretrained model, our new vocab will contain words that were in the old model, but also some that weren't. We'll keep the corresponding row in the embedding matrix for words that exist in the pretrained model and initialize a random vector in rows corresponding to new words.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In tokenizing a given corpus, there are three main methods:</p>
+<ol>
+<li><strong>Words</strong>: Split a sentence at every space and puntuation (like apostrophes) to create words and contractions. </li>
+<li><strong>Subwords</strong>: Split words into subwords based on the most commonly occurring substrings.</li>
+<li><strong>Characters</strong>: Split a sentence into characters. </li>
+</ol>
+<p>When do we use which? Word tokenizers assume that <em>spaces</em> are special separators in a sentence. While this is usually correct for English, other languages like Chinese and Japanese that don't really have spaces are better off with subword and character tokenizers. And, when spaces are special, but the languages uses many subwords like in Turkish and Hungarian, it would be better to use subword tokenizers than word tokenizers. Lastly, when a language has many characters (unlike 26 in English) like Chinese, it may be better to use character tokenizers.</p>
+<p>You want to be careful to not have too many items in your vocab. For subword, you have the positive that there'll be fewer tokens in each sentence, and thus have faster training, less memory, and less state for the model to remember. But in general, a larger vocab leads to larger embedding matrices, which require more data to learn, take longer and require more GPU memory to train.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Once we have our vocab, we can convert every token in the corpus into a number that represents its index in the vocab.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Then, we have to make our independent and dependent variables for our <code>DataSet</code> object (which is just a wrapper class for a tuple <code>(independent, dependent)</code>).</p>
+<p>For a language model, we want it to be able to predict the next word in a sequence of words. So, given a sequence of words, we want our independent variable to be from the first word of the sequence to the second last word. Then, our dependent variable will be from the second word of the sequence to the last word.</p>
+<p>We'd also be dividing the text into small pieces <em>while maintaining order</em> (otherwise our model would just predict random words instead of <em>the next word in the sequence</em>).</p>
+<p>At every epoch, we shuffle our collection of documents and concatenate them into a stream of tokens. Then, we cut that stream into a batch of fixed-size consecutive mini-streams. The model then reads the mini-streams in order and learns to predict the next word for each independent variable.</p>
+<p>Unlike with images, the key thing in NLP is that we randomize the <em>documents</em> (blocks of text) but we always have to maintain order of the <em>words</em> in each document.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Fine-tuning-the-language-model">Fine-tuning the language model<a class="anchor-link" href="#Fine-tuning-the-language-model"> </a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>When we're fine-tuning the pretrained language model, we use a recurrent neural network (unlike convolutional neural network for vision) and use the AWD-LSTM architecture. For our loss function, we use cross-entropy loss since (almost all) NLP problems are classification problems where the different categories are the words in the vocab. Finally, for our metrics we'll use accuracy (since cross-entropy is difficult to interpret and speaks more for the confidence of our model than its accuracy) and perplexity (which is the exponent of the loss).</p>
+<p>If we don't want to train a text classifier and instead just wanted a language model, we stop here and end up with a text generator. If you add some randomness (so you don't get the same prediction twice), you can generate many different kinds of text given the first few words.</p>
+<p>Otherwise, you'll use this fine-tuned language model to train a text classifier.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Fine-tuning-the-text-classifier">Fine-tuning the text classifier<a class="anchor-link" href="#Fine-tuning-the-text-classifier"> </a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Unlike with a language model, when making our <code>DataLoaders</code>, our independent variable will be the text, while our dependent variable must be supplied. And, when trying to make a mini-batch, the tensors have to be the same shape. So, we sort the text by token length before each epoch and for every mini-batch, pad every text to be the same token length as the text with the largest token length in the mini-batch. By "pad", we add a special padding token that'll be ignored by the model.</p>
+<p>Then, we fine-tune our fine-tuned language model by training it with discriminative learning rates and gradual unfreezing.</p>
+<p>In the end, you have a language model that can generate text related to your problem domain and a text classifier that can classify text in your problem domain with certain labels.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With NLP, there's a lot of fine-tuning. By ULMFit, you start with a pretrained language model that could have been trained on a really big data set like Wikipedia, you fine-tune it on your own text to have a language model that can generate text really well for your problem domain, then you fine-tune that language model to train a text classifier.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><a class="u-url" href="/DunGeon/nlp/2022/04/05/Natural-Language-Processing.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/DunGeon/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/DunGeon/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/DunGeon/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>The DunGeon that holds ipynbs</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/geon-youn" target="_blank" title="geon-youn"><svg class="svg-icon grey"><use xlink:href="/DunGeon/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/griolu" target="_blank" title="griolu"><svg class="svg-icon grey"><use xlink:href="/DunGeon/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
