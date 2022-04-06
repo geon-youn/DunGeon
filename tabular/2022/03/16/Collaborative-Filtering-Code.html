@@ -4,21 +4,21 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>So you want to code Collaborative Filtering | Geon’s Blog</title>
+<title>So you want to code collaborative filtering | Geon’s Blog</title>
 <meta name="generator" content="Jekyll v4.1.1" />
-<meta property="og:title" content="So you want to code Collaborative Filtering" />
+<meta property="og:title" content="So you want to code collaborative filtering" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="The DunGeon that holds ipynbs" />
-<meta property="og:description" content="The DunGeon that holds ipynbs" />
-<link rel="canonical" href="https://geon-youn.github.io/DunGeon/2022/03/16/Collab.html" />
-<meta property="og:url" content="https://geon-youn.github.io/DunGeon/2022/03/16/Collab.html" />
+<meta name="description" content="Wait… doesn’t this go against the top-down approach of fast.ai?" />
+<meta property="og:description" content="Wait… doesn’t this go against the top-down approach of fast.ai?" />
+<link rel="canonical" href="https://geon-youn.github.io/DunGeon/tabular/2022/03/16/Collaborative-Filtering-Code.html" />
+<meta property="og:url" content="https://geon-youn.github.io/DunGeon/tabular/2022/03/16/Collaborative-Filtering-Code.html" />
 <meta property="og:site_name" content="Geon’s Blog" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2022-03-16T00:00:00-05:00" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="So you want to code Collaborative Filtering" />
+<meta property="twitter:title" content="So you want to code collaborative filtering" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-03-16T00:00:00-05:00","datePublished":"2022-03-16T00:00:00-05:00","description":"The DunGeon that holds ipynbs","headline":"So you want to code Collaborative Filtering","mainEntityOfPage":{"@type":"WebPage","@id":"https://geon-youn.github.io/DunGeon/2022/03/16/Collab.html"},"url":"https://geon-youn.github.io/DunGeon/2022/03/16/Collab.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-03-16T00:00:00-05:00","datePublished":"2022-03-16T00:00:00-05:00","description":"Wait… doesn’t this go against the top-down approach of fast.ai?","headline":"So you want to code collaborative filtering","mainEntityOfPage":{"@type":"WebPage","@id":"https://geon-youn.github.io/DunGeon/tabular/2022/03/16/Collaborative-Filtering-Code.html"},"url":"https://geon-youn.github.io/DunGeon/tabular/2022/03/16/Collaborative-Filtering-Code.html"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/DunGeon/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://geon-youn.github.io/DunGeon/feed.xml" title="Geon's Blog" /><link rel="shortcut icon" type="image/x-icon" href="/DunGeon/images/icon.png">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
@@ -90,7 +90,7 @@ window.onload = wrap_img;
         <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
   <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">So you want to code Collaborative Filtering</h1><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-03-16T00:00:00-05:00" itemprop="datePublished">
+    <h1 class="post-title p-name" itemprop="name headline">So you want to code collaborative filtering</h1><p class="page-description">Wait... doesn't this go against the top-down approach of fast.ai?</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-03-16T00:00:00-05:00" itemprop="datePublished">
         Mar 16, 2022
       </time>
        • <span class="read-time" title="Estimated read time">
@@ -101,30 +101,37 @@ window.onload = wrap_img;
 </span></p>
 
     
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/DunGeon/categories/#tabular">tabular</a>
+        
+      
+      </p>
+    
 
     
       
         <div class="pb-5 d-flex flex-justify-center">
           <div class="px-2">
 
-    <a href="https://github.com/geon-youn/DunGeon/tree/master/_notebooks/2022-03-16-Collab.ipynb" role="button" target="_blank">
+    <a href="https://github.com/geon-youn/DunGeon/tree/master/_notebooks/2022-03-16-Collaborative-Filtering-Code.ipynb" role="button" target="_blank">
 <img class="notebook-badge-image" src="/DunGeon/assets/badges/github.svg" alt="View On GitHub">
     </a>
 </div>
 
           <div class="px-2">
-    <a href="https://mybinder.org/v2/gh/geon-youn/DunGeon/master?filepath=_notebooks%2F2022-03-16-Collab.ipynb" target="_blank">
+    <a href="https://mybinder.org/v2/gh/geon-youn/DunGeon/master?filepath=_notebooks%2F2022-03-16-Collaborative-Filtering-Code.ipynb" target="_blank">
         <img class="notebook-badge-image" src="/DunGeon/assets/badges/binder.svg" alt="Open In Binder"/>
     </a>
 </div>
 
           <div class="px-2">
-    <a href="https://colab.research.google.com/github/geon-youn/DunGeon/blob/master/_notebooks/2022-03-16-Collab.ipynb" target="_blank">
+    <a href="https://colab.research.google.com/github/geon-youn/DunGeon/blob/master/_notebooks/2022-03-16-Collaborative-Filtering-Code.ipynb" target="_blank">
         <img class="notebook-badge-image" src="/DunGeon/assets/badges/colab.svg" alt="Open In Colab"/>
     </a>
 </div>
           <div class="px-2">
-  <a href="https://deepnote.com/launch?url=https%3A%2F%2Fgithub.com%2Fgeon-youn%2FDunGeon%2Fblob%2Fmaster%2F_notebooks%2F2022-03-16-Collab.ipynb" target="_blank">
+  <a href="https://deepnote.com/launch?url=https%3A%2F%2Fgithub.com%2Fgeon-youn%2FDunGeon%2Fblob%2Fmaster%2F_notebooks%2F2022-03-16-Collaborative-Filtering-Code.ipynb" target="_blank">
       <img class="notebook-badge-image" src="/DunGeon/assets/badges/deepnote.svg" alt="Launch in Deepnote"/>
   </a>
 </div>
@@ -137,7 +144,7 @@ window.onload = wrap_img;
 #################################################
 ### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
 #################################################
-# file to edit: _notebooks/2022-03-16-Collab.ipynb
+# file to edit: _notebooks/2022-03-16-Collaborative-Filtering-Code.ipynb
 -->
 
 <div class="container" id="notebook-container">
@@ -1704,7 +1711,7 @@ $$\begin{bmatrix}0 &amp; 1 &amp; 2 &amp; 3\end{bmatrix}^T\begin{bmatrix}0&amp;0&
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="So-you-want-to-interpret-the-results">So you want to interpret the results<a class="anchor-link" href="#So-you-want-to-interpret-the-results"> </a></h2>
+<h2 id="Interpreting-the-results">Interpreting the results<a class="anchor-link" href="#Interpreting-the-results"> </a></h2>
 </div>
 </div>
 </div>
@@ -1823,7 +1830,7 @@ $$\begin{bmatrix}0 &amp; 1 &amp; 2 &amp; 3\end{bmatrix}^T\begin{bmatrix}0&amp;0&
 
 
 
-  </div><a class="u-url" href="/DunGeon/2022/03/16/Collab.html" hidden></a>
+  </div><a class="u-url" href="/DunGeon/tabular/2022/03/16/Collaborative-Filtering-Code.html" hidden></a>
 </article>
 
       </div>

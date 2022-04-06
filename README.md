@@ -5,8 +5,8 @@
 
 # The DunGeon
 
-> Where your journey to understanding Geon's thoughtflow begins. [Here](https://geon-youn.github.io/DunGeon/) contains blog posts that Geon will make while learning [fast.ai](fast.ai). 
+> This is where your journey to understanding Geon's mind begins. Adventure [here](https://geon-youn.github.io/DunGeon/) to find blog posts that Geon will make while learning [fast.ai](https://www.fast.ai). 
 
 ---
 
-_powered by [fastpages](https://github.com/fastai/fastpages)_
+_this blog is powered by [fastpages](https://github.com/fastai/fastpages)_
