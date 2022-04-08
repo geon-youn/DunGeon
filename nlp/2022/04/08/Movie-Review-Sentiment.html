@@ -170,8 +170,8 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="err">!</span><span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="s1">&#39;/content/gdrive/MyDrive/data_sets/&#39;</span>
-<span class="o">%</span><span class="n">cd</span> <span class="s1">&#39;/content/gdrive/MyDrive/data_sets/&#39;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>mkdir -p <span class="s1">&#39;/content/gdrive/MyDrive/data_sets/&#39;</span>
+<span class="o">%</span><span class="k">cd</span> &#39;/content/gdrive/MyDrive/data_sets/&#39;
 </pre></div>
 
     </div>
@@ -195,7 +195,7 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">fastai.text.all</span> <span class="kn">import</span> <span class="o">*</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">fastai.text.all</span> <span class="kn">import</span> <span class="o">*</span>
 </pre></div>
 
     </div>
@@ -212,7 +212,7 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="n">untar_data</span><span class="p">(</span><span class="n">URLs</span><span class="o">.</span><span class="n">IMDB_SAMPLE</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="n">untar_data</span><span class="p">(</span><span class="n">URLs</span><span class="o">.</span><span class="n">IMDB_SAMPLE</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -229,7 +229,7 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="err">!</span><span class="n">mv</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)}</span> <span class="s1">&#39;/content/gdrive/MyDrive/data_sets/imdb_sample&#39;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span>mv <span class="o">{</span>str<span class="o">(</span>path<span class="o">)}</span> <span class="s1">&#39;/content/gdrive/MyDrive/data_sets/imdb_sample&#39;</span>
 </pre></div>
 
     </div>
@@ -246,7 +246,7 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/content/gdrive/MyDrive/data_sets/imdb_sample&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/content/gdrive/MyDrive/data_sets/imdb_sample&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -276,7 +276,7 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="o">/</span><span class="s1">&#39;texts.csv&#39;</span><span class="p">,</span> <span class="n">low_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">);</span> <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="o">/</span><span class="s1">&#39;texts.csv&#39;</span><span class="p">,</span> <span class="n">low_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">);</span> <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -432,7 +432,7 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">dls_lm</span> <span class="o">=</span> 
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dls_lm</span> <span class="o">=</span> 
     <span class="n">DataBlock</span><span class="p">(</span>
         <span class="n">blocks</span>    <span class="o">=</span> <span class="n">TextBlock</span><span class="o">.</span><span class="n">from_df</span><span class="p">([</span><span class="s1">&#39;text&#39;</span><span class="p">],</span> <span class="n">is_lm</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
         <span class="n">get_items</span> <span class="o">=</span> <span class="n">ColReader</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">),</span>
@@ -468,7 +468,7 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">dls_lm</span><span class="o">.</span><span class="n">show_batch</span><span class="p">(</span><span class="n">max_n</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dls_lm</span><span class="o">.</span><span class="n">show_batch</span><span class="p">(</span><span class="n">max_n</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -530,7 +530,7 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">defaults</span><span class="o">.</span><span class="n">text_proc_rules</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">defaults</span><span class="o">.</span><span class="n">text_proc_rules</span>
 </pre></div>
 
     </div>
@@ -579,8 +579,7 @@ window.onload = wrap_img;
 <li><code>replace_maj</code>: lowercase a capitalized word and add a <code>xxmaj</code> before it.</li>
 <li><code>lowercase</code>: lowercase all words and add a <code>xxbox</code> to the beginning and/or <code>xxeos</code> to the end of the string.</li>
 </ul>
-<p>\
-And here's most of it in action:</p>
+<p>And here's most of it in action:</p>
 
 </div>
 </div>
@@ -592,7 +591,7 @@ And here's most of it in action:</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">tok</span> <span class="o">=</span> <span class="n">WordTokenizer</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tok</span> <span class="o">=</span> <span class="n">WordTokenizer</span><span class="p">()</span>
 <span class="n">tkn</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">tok</span><span class="p">)</span>
 <span class="nb">list</span><span class="p">(</span><span class="n">tkn</span><span class="p">(</span><span class="s1">&#39;amp; &amp;copy;   #a&quot; &lt;br /&gt;  www.google.ca/INDEX.html wow wow wow&#39;</span><span class="p">))</span>
 </pre></div>
@@ -658,7 +657,7 @@ And here's most of it in action:</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span> <span class="o">=</span> <span class="n">language_model_learner</span><span class="p">(</span><span class="n">dls_lm</span><span class="p">,</span> <span class="n">AWD_LSTM</span><span class="p">,</span> <span class="n">drop_mult</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">accuracy</span><span class="p">,</span> <span class="n">Perplexity</span><span class="p">()])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learn</span> <span class="o">=</span> <span class="n">language_model_learner</span><span class="p">(</span><span class="n">dls_lm</span><span class="p">,</span> <span class="n">AWD_LSTM</span><span class="p">,</span> <span class="n">drop_mult</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">accuracy</span><span class="p">,</span> <span class="n">Perplexity</span><span class="p">()])</span>
 </pre></div>
 
     </div>
@@ -682,7 +681,7 @@ And here's most of it in action:</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">lr</span> <span class="o">=</span> <span class="n">learn</span><span class="o">.</span><span class="n">lr_find</span><span class="p">()</span><span class="o">.</span><span class="n">valley</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">lr</span> <span class="o">=</span> <span class="n">learn</span><span class="o">.</span><span class="n">lr_find</span><span class="p">()</span><span class="o">.</span><span class="n">valley</span>
 </pre></div>
 
     </div>
@@ -747,7 +746,7 @@ And here's most of it in action:</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">lr</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">lr</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -829,7 +828,7 @@ And here's most of it in action:</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">lr</span> <span class="o">=</span> <span class="n">learn</span><span class="o">.</span><span class="n">lr_find</span><span class="p">()</span><span class="o">.</span><span class="n">valley</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">lr</span> <span class="o">=</span> <span class="n">learn</span><span class="o">.</span><span class="n">lr_find</span><span class="p">()</span><span class="o">.</span><span class="n">valley</span>
 </pre></div>
 
     </div>
@@ -894,7 +893,7 @@ And here's most of it in action:</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">unfreeze</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">unfreeze</span><span class="p">()</span>
 <span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">lr</span><span class="p">)</span>
 </pre></div>
 
@@ -977,7 +976,7 @@ And here's most of it in action:</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">save_encoder</span><span class="p">(</span><span class="s1">&#39;lm&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">save_encoder</span><span class="p">(</span><span class="s1">&#39;lm&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1001,7 +1000,7 @@ And here's most of it in action:</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="s2">&quot;I liked the book better&quot;</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="s2">&quot;I liked the book better&quot;</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1078,7 +1077,7 @@ And here's most of it in action:</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">dls_c</span> <span class="o">=</span> 
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dls_c</span> <span class="o">=</span> 
     <span class="n">DataBlock</span><span class="p">(</span>
         <span class="n">blocks</span>   <span class="o">=</span> <span class="p">(</span><span class="n">TextBlock</span><span class="o">.</span><span class="n">from_df</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">vocab</span><span class="o">=</span><span class="n">dls_lm</span><span class="o">.</span><span class="n">vocab</span><span class="p">),</span> <span class="n">CategoryBlock</span><span class="p">),</span>
         <span class="n">get_x</span>    <span class="o">=</span> <span class="n">ColReader</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">),</span>
@@ -1108,7 +1107,7 @@ And here's most of it in action:</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">dls_c</span><span class="o">.</span><span class="n">show_batch</span><span class="p">(</span><span class="n">max_n</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dls_c</span><span class="o">.</span><span class="n">show_batch</span><span class="p">(</span><span class="n">max_n</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1167,7 +1166,7 @@ And here's most of it in action:</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span> <span class="o">=</span> <span class="n">text_classifier_learner</span><span class="p">(</span><span class="n">dls_c</span><span class="p">,</span> <span class="n">AWD_LSTM</span><span class="p">,</span> <span class="n">drop_mult</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="n">accuracy</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learn</span> <span class="o">=</span> <span class="n">text_classifier_learner</span><span class="p">(</span><span class="n">dls_c</span><span class="p">,</span> <span class="n">AWD_LSTM</span><span class="p">,</span> <span class="n">drop_mult</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="n">accuracy</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1191,7 +1190,7 @@ And here's most of it in action:</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span> <span class="o">=</span> <span class="n">learn</span><span class="o">.</span><span class="n">load_encoder</span><span class="p">(</span><span class="s1">&#39;lm&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learn</span> <span class="o">=</span> <span class="n">learn</span><span class="o">.</span><span class="n">load_encoder</span><span class="p">(</span><span class="s1">&#39;lm&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1215,7 +1214,7 @@ And here's most of it in action:</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">2e-2</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">2e-2</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1295,7 +1294,7 @@ And here's most of it in action:</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">den</span> <span class="o">=</span> <span class="mf">2.6</span><span class="o">**</span><span class="mi">4</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">den</span> <span class="o">=</span> <span class="mf">2.6</span><span class="o">**</span><span class="mi">4</span>
 <span class="n">learn</span><span class="o">.</span><span class="n">freeze_to</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">slice</span><span class="p">(</span><span class="mf">1e-2</span><span class="o">/</span><span class="n">den</span><span class="p">,</span> <span class="mf">1e-2</span><span class="p">))</span>
 </pre></div>
@@ -1377,7 +1376,7 @@ And here's most of it in action:</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">freeze_to</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">freeze_to</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span>
 <span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">slice</span><span class="p">(</span><span class="mf">5e-3</span><span class="o">/</span><span class="n">den</span><span class="p">,</span> <span class="mf">5e-3</span><span class="p">))</span>
 </pre></div>
 
@@ -1458,7 +1457,7 @@ And here's most of it in action:</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">unfreeze</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">unfreeze</span><span class="p">()</span>
 <span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">slice</span><span class="p">(</span><span class="mf">1e-3</span><span class="o">/</span><span class="n">den</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">))</span>
 </pre></div>
 
@@ -1546,7 +1545,7 @@ And here's most of it in action:</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1654,7 +1653,7 @@ And here's most of it in action:</p>
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="p">[</span><span class="n">learn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="p">[</span><span class="n">learn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span>
 <span class="s2">&quot;So many choices... just seem halfhearted. They&#39;re not terrible, but they&#39;re also not interesting.&quot;</span><span class="p">,</span>
 <span class="s2">&quot;Doesn&#39;t deliver a lot of high notes, but it&#39;s not unwatchable (especially if you enjoy the vampire genre). </span><span class="se">\&quot;</span><span class="s2">Morbius</span><span class="se">\&quot;</span><span class="s2"> is not as great as you&#39;d hoped, but not as bad as you feared.&quot;</span><span class="p">,</span>
 <span class="s2">&quot;Overall, this is an entertaining movie. It sucks you in with the action and standout scenes between some of the characters. But, while Morbius has the makings of a great anti-hero revival, it wavers with the execution.&quot;</span><span class="p">,</span>
