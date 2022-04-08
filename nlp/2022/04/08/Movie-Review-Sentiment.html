@@ -157,7 +157,7 @@ window.onload = wrap_img;
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If you didn't know, I work on Colab; I don't own a GPU that I can use to train models on my own. Whenever I download data sets, I end up having to redownload them when I come back on the next day. This time, before we get into the main topic, I want to show how I've been able to download the data sets into my Google drive so that I don't have to redownload them every time. It's also helpful since I can save the pickles to the same folder instead of saving them on my laptop and having to upload them later.</p>
+<p>If you didn't know, I work on Colab; I don't own a GPU that I can use to train models on my own. Whenever I download data sets, I end up having to redownload them when I come back on the next day. However, I found out how to download the data sets into my Google drive so that I don't have to redownload them every time. It's also helpful since I can save the pickles to the same folder instead of saving them on my laptop and having to upload them later.</p>
 <p>It's really simple too: you mount onto your drive and then <code>cd</code> to your desired folder. When you download data sets, you download them into that folder. But, if you use <code>untar_data</code>, you have to move the files to the folder since it only saves to <code>~/.fastai/...</code>.</p>
 
 </div>
@@ -175,20 +175,6 @@ window.onload = wrap_img;
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>/content/gdrive/MyDrive/data_sets
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -226,62 +212,10 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="n">untar_data</span><span class="p">(</span><span class="n">URLs</span><span class="o">.</span><span class="n">IMDB_SAMPLE</span><span class="p">);</span> <span class="n">path</span>
+<div class=" highlight hl-python"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="n">untar_data</span><span class="p">(</span><span class="n">URLs</span><span class="o">.</span><span class="n">IMDB_SAMPLE</span><span class="p">)</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_html rendered_html output_subarea ">
-
-<style>
-    /* Turns off some styling */
-    progress {
-        /* gets rid of default border in Firefox and Opera. */
-        border: none;
-        /* Needs to be in here for Safari polyfill so background images work as expected. */
-        background-size: auto;
-    }
-    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
-        background: #F44336;
-    }
-</style>
-
-</div>
-
-</div>
-
-<div class="output_area">
-
-
-<div class="output_html rendered_html output_subarea ">
-
-    <div>
-      <progress value="573440" class="" max="571827" style="width:300px; height:20px; vertical-align: middle;"></progress>
-      100.28% [573440/571827 00:00&lt;00:00]
-    </div>
-    
-</div>
-
-</div>
-
-<div class="output_area">
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>Path(&#39;/root/.fastai/data/imdb_sample&#39;)</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -322,37 +256,6 @@ window.onload = wrap_img;
 </div>
     
 
-    
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="err">!</span><span class="n">ls</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)}</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>texts.csv
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-    
-
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Preparing-the-data-for-the-language-model">Preparing the data for the language model<a class="anchor-link" href="#Preparing-the-data-for-the-language-model"> </a></h2>
@@ -361,7 +264,7 @@ window.onload = wrap_img;
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>To get the data from the data set, we'll use fastai's <code>get_text_files</code> as opposed to <code>get_image_files</code> that we did for computer vision problems. By specifying a list for <code>folders</code>, <code>get_text_files</code> will only look for text files in those folders.</p>
+<p>Since we're using the sample IMDB data set, we don't have separate folders, but instead have a single <code>.csv</code> file with 1000 reviews. So, we'll be using <code>TextBlock.from_df</code> instead of <code>TextBlock.from_text_files</code> to tell fastai how to get our data:</p>
 
 </div>
 </div>
@@ -373,14 +276,15 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="o">/</span><span class="s1">&#39;texts.csv&#39;</span><span class="p">,</span> <span class="n">low_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<div class=" highlight hl-python"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="o">/</span><span class="s1">&#39;texts.csv&#39;</span><span class="p">,</span> <span class="n">low_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">);</span> <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 
     </div>
 </div>
 </div>
-
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Output" data-close="Show Output"></summary>
+        <p>
 <div class="output_wrapper">
 <div class="output">
 
@@ -516,17 +420,11 @@ window.onload = wrap_img;
 
 </div>
 </div>
-
+</p>
+    </details>
 </div>
     
 
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Then, we'll go straight into putting it into a <code>DataBlock</code> from which we can make our <code>DataLoaders</code>:</p>
-
-</div>
-</div>
-</div>
     
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -534,10 +432,11 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">dls_lm</span> <span class="o">=</span> <span class="n">DataBlock</span><span class="p">(</span>
-            <span class="n">blocks</span><span class="o">=</span><span class="n">TextBlock</span><span class="o">.</span><span class="n">from_df</span><span class="p">([</span><span class="s1">&#39;text&#39;</span><span class="p">],</span> <span class="n">is_lm</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-            <span class="n">get_items</span><span class="o">=</span><span class="n">ColReader</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">),</span>
-            <span class="n">splitter</span><span class="o">=</span><span class="n">RandomSplitter</span><span class="p">(</span><span class="mf">0.1</span><span class="p">))</span><span class="o">.</span><span class="n">dataloaders</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+<div class=" highlight hl-python"><pre><span></span><span class="n">dls_lm</span> <span class="o">=</span> 
+    <span class="n">DataBlock</span><span class="p">(</span>
+        <span class="n">blocks</span>    <span class="o">=</span> <span class="n">TextBlock</span><span class="o">.</span><span class="n">from_df</span><span class="p">([</span><span class="s1">&#39;text&#39;</span><span class="p">],</span> <span class="n">is_lm</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">get_items</span> <span class="o">=</span> <span class="n">ColReader</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">),</span>
+        <span class="n">splitter</span>  <span class="o">=</span> <span class="n">RandomSplitter</span><span class="p">(</span><span class="mf">0.1</span><span class="p">))</span><span class="o">.</span><span class="n">dataloaders</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -575,7 +474,9 @@ window.onload = wrap_img;
     </div>
 </div>
 </div>
-
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Output" data-close="Show Output"></summary>
+        <p>
 <div class="output_wrapper">
 <div class="output">
 
@@ -610,7 +511,8 @@ window.onload = wrap_img;
 
 </div>
 </div>
-
+</p>
+    </details>
 </div>
     
 
@@ -634,7 +536,9 @@ window.onload = wrap_img;
     </div>
 </div>
 </div>
-
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Output" data-close="Show Output"></summary>
+        <p>
 <div class="output_wrapper">
 <div class="output">
 
@@ -657,7 +561,8 @@ window.onload = wrap_img;
 
 </div>
 </div>
-
+</p>
+    </details>
 </div>
     
 
@@ -672,9 +577,10 @@ window.onload = wrap_img;
 <li><code>rm_useless_spaces</code>: remove repeated spaces.</li>
 <li><code>replace_all_caps</code>: lowercase a word in all caps and add a <code>xxup</code> before it.</li>
 <li><code>replace_maj</code>: lowercase a capitalized word and add a <code>xxmaj</code> before it.</li>
-<li><code>lowercase</code>: lowercase all words and add a <code>xxbox</code> to the beginning and/or <code>xxeos</code> to the end of the string. </li>
+<li><code>lowercase</code>: lowercase all words and add a <code>xxbox</code> to the beginning and/or <code>xxeos</code> to the end of the string.</li>
 </ul>
-<p>To show most of it in action:</p>
+<p>\
+And here's most of it in action:</p>
 
 </div>
 </div>
@@ -694,7 +600,9 @@ window.onload = wrap_img;
     </div>
 </div>
 </div>
-
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Output" data-close="Show Output"></summary>
+        <p>
 <div class="output_wrapper">
 <div class="output">
 
@@ -725,7 +633,8 @@ window.onload = wrap_img;
 
 </div>
 </div>
-
+</p>
+    </details>
 </div>
     
 
@@ -737,7 +646,7 @@ window.onload = wrap_img;
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We'll be fine-tuning a language model pretrained using text from Wikepedia. This model uses a recurrent neural network using the AWD-LSTM architecture.</p>
+<p>We'll be fine-tuning a language model pretrained on Wikepedia pages. This model uses a recurrent neural network using the AWD-LSTM architecture.</p>
 
 </div>
 </div>
@@ -1078,6 +987,13 @@ window.onload = wrap_img;
 </div>
     
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If we were to stop here, we'd have a text generator (which is what a language model is). We provide a piece of text and how many words we want it to predict:</p>
+
+</div>
+</div>
+</div>
     
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -1162,52 +1078,16 @@ window.onload = wrap_img;
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-python"><pre><span></span><span class="n">dls_c</span> <span class="o">=</span> <span class="n">DataBlock</span><span class="p">(</span>
-    <span class="n">blocks</span>    <span class="o">=</span><span class="p">(</span><span class="n">TextBlock</span><span class="o">.</span><span class="n">from_df</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">vocab</span><span class="o">=</span><span class="n">dls_lm</span><span class="o">.</span><span class="n">vocab</span><span class="p">),</span> <span class="n">CategoryBlock</span><span class="p">),</span>
-    <span class="n">get_x</span>     <span class="o">=</span><span class="n">ColReader</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">),</span>
-    <span class="n">get_y</span>     <span class="o">=</span><span class="n">ColReader</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">),</span>
-    <span class="n">splitter</span>  <span class="o">=</span><span class="n">ColSplitter</span><span class="p">()</span>
-    <span class="p">)</span><span class="o">.</span><span class="n">dataloaders</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+<div class=" highlight hl-python"><pre><span></span><span class="n">dls_c</span> <span class="o">=</span> 
+    <span class="n">DataBlock</span><span class="p">(</span>
+        <span class="n">blocks</span>   <span class="o">=</span> <span class="p">(</span><span class="n">TextBlock</span><span class="o">.</span><span class="n">from_df</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">vocab</span><span class="o">=</span><span class="n">dls_lm</span><span class="o">.</span><span class="n">vocab</span><span class="p">),</span> <span class="n">CategoryBlock</span><span class="p">),</span>
+        <span class="n">get_x</span>    <span class="o">=</span> <span class="n">ColReader</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">),</span>
+        <span class="n">get_y</span>    <span class="o">=</span> <span class="n">ColReader</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">),</span>
+        <span class="n">splitter</span> <span class="o">=</span> <span class="n">ColSplitter</span><span class="p">()</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">dataloaders</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_html rendered_html output_subarea ">
-
-<style>
-    /* Turns off some styling */
-    progress {
-        /* gets rid of default border in Firefox and Opera. */
-        border: none;
-        /* Needs to be in here for Safari polyfill so background images work as expected. */
-        background-size: auto;
-    }
-    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
-        background: #F44336;
-    }
-</style>
-
-</div>
-
-</div>
-
-<div class="output_area">
-
-
-<div class="output_html rendered_html output_subarea ">
-
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -1216,7 +1096,7 @@ window.onload = wrap_img;
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This time, we have to specify our <code>blocks</code> differently such that our independent variable is a <code>TextBlock</code> and our dependent variable is a <code>CategoryBlock</code>. So, when show a part of a batch, it'll look different from a language model's <code>DataLoaders</code>:</p>
+<p>This time, we have to specify our <code>blocks</code> differently so that our independent variable is a <code>TextBlock</code> and our dependent variable is a <code>CategoryBlock</code>. So, when show a part of a batch, it'll look different from a language model's <code>DataLoaders</code>:</p>
 
 </div>
 </div>
@@ -1275,7 +1155,7 @@ window.onload = wrap_img;
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Next, we'll define a <code>Learner</code> by using the <code>text_classifier_learner</code> class and load the encoder.</p>
+<p>Next, we'll define a <code>Learner</code> by using the <code>text_classifier_learner</code> class:</p>
 
 </div>
 </div>
@@ -1297,6 +1177,13 @@ window.onload = wrap_img;
 </div>
     
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>And load the encoder:</p>
+
+</div>
+</div>
+</div>
     
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -1396,7 +1283,7 @@ window.onload = wrap_img;
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Then unfreeze the last 2 layers:</p>
+<p>Then unfreeze the last 2 layers and begin using discriminative learning rates:</p>
 
 </div>
 </div>
@@ -1478,7 +1365,7 @@ window.onload = wrap_img;
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Unfreeze up to the last 3 layers:</p>
+<p>Then unfreeze up to the last 3 layers:</p>
 
 </div>
 </div>
@@ -1559,7 +1446,7 @@ window.onload = wrap_img;
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>And unfreeze the entire model:</p>
+<p>Next unfreeze the entire model:</p>
 
 </div>
 </div>
@@ -1647,7 +1534,7 @@ window.onload = wrap_img;
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>And train for a few more epochs:</p>
+<p>And finally train for a few more epochs:</p>
 
 </div>
 </div>
@@ -1755,7 +1642,7 @@ window.onload = wrap_img;
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>And we're done! We can try predicting with a few of Morbius' reviews:</p>
+<p>And we're done! We can try predicting the sentiment of a few <em>Morbius</em> reviews:</p>
 
 </div>
 </div>
