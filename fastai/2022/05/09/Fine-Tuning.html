@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>How to fine-tune for transfer learning | Geon’s Blog</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="How to fine-tune for transfer learning" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Off with his head!" />
+<meta property="og:description" content="Off with his head!" />
+<link rel="canonical" href="https://geon-youn.github.io/DunGeon/fastai/2022/05/09/Fine-Tuning.html" />
+<meta property="og:url" content="https://geon-youn.github.io/DunGeon/fastai/2022/05/09/Fine-Tuning.html" />
+<meta property="og:site_name" content="Geon’s Blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-05-09T00:00:00-05:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="How to fine-tune for transfer learning" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-05-09T00:00:00-05:00","datePublished":"2022-05-09T00:00:00-05:00","description":"Off with his head!","headline":"How to fine-tune for transfer learning","mainEntityOfPage":{"@type":"WebPage","@id":"https://geon-youn.github.io/DunGeon/fastai/2022/05/09/Fine-Tuning.html"},"url":"https://geon-youn.github.io/DunGeon/fastai/2022/05/09/Fine-Tuning.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/DunGeon/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://geon-youn.github.io/DunGeon/feed.xml" title="Geon's Blog" /><link rel="shortcut icon" type="image/x-icon" href="/DunGeon/images/icon.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/DunGeon/">Geon&#39;s Blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/DunGeon/about/">About Me</a><a class="page-link" href="/DunGeon/search/">Search</a><a class="page-link" href="/DunGeon/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">How to fine-tune for transfer learning</h1><p class="page-description">Off with his head!</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-05-09T00:00:00-05:00" itemprop="datePublished">
+        May 9, 2022
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      17 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/DunGeon/categories/#fastai">fastai</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-justify-center">
+          <div class="px-2">
+
+    <a href="https://github.com/geon-youn/DunGeon/tree/master/_notebooks/2022-05-09-Fine-Tuning.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/DunGeon/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/geon-youn/DunGeon/master?filepath=_notebooks%2F2022-05-09-Fine-Tuning.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/DunGeon/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/geon-youn/DunGeon/blob/master/_notebooks/2022-05-09-Fine-Tuning.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/DunGeon/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+          <div class="px-2">
+  <a href="https://deepnote.com/launch?url=https%3A%2F%2Fgithub.com%2Fgeon-youn%2FDunGeon%2Fblob%2Fmaster%2F_notebooks%2F2022-05-09-Fine-Tuning.ipynb" target="_blank">
+      <img class="notebook-badge-image" src="/DunGeon/assets/badges/deepnote.svg" alt="Launch in Deepnote"/>
+  </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2022-05-09-Fine-Tuning.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>fastai has specific applications at the top layer: computer vision, natural language processing, and tabular. We've already covered the architectures that we can use to train such models, but we haven't explored what fastai does in the application APIs that allow us to use these models, either to train them from scratch or to fine-tune them.</p>
+<p>All deep learning models have a body and a head. The body is where majority of its learning occurs and where it takes the input and outputs activations. These activations are given to the head where the decision making occurs - the decision making for the task the model is specifically trained for. So, when we're transfer learning, we'll have to cut the head off the pretrained model and give it a new head. Then, we train the model using discriminative learning rates: different learning rates for the body and the head (and for early and later epochs).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Computer-Vision">Computer Vision<a class="anchor-link" href="#Computer-Vision"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With computer vision, we either use <code>cnn_learner</code> for classification, or <code>unet_learner</code> for generative vision models.</p>
+<p>In <code>cnn_learner</code>, we pass the architecture we want to use for the <em>body</em> of the network. When we pass a pretrained network, fastai downloads the pretrained weights and prepares it for transfer learning.</p>
+<p>First, it cuts the <em>head</em> of the network; with resnet, we cut off everything from the adaptive average pooling layer onwards. However, we can't just search for that layer. Instead, fastai has a <code>model_meta</code> dictionary that stores the index to cut, what function is at that index, and the stats needed for normalization for that architecture. For instance, the <code>model_meta</code> for resnet50 is:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">model_meta</span><span class="p">[</span><span class="n">resnet50</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>{&#39;cut&#39;: -2,
+ &#39;split&#39;: &lt;function fastai.vision.learner._resnet_split&gt;,
+ &#39;stats&#39;: ([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])}</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So for a resnet50 architecture, we keep all the layers prior to the cut point of <code>-2</code> to get the <em>body</em> of the model that we can use for transfer learning. The <em>head</em>, which is specialized for ImageNet classification, is replaced by a new head, which we can make using <code>create_head</code>:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">nf</span><span class="p">,</span> <span class="n">n_out</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">2</span>
+<span class="n">create_head</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">n_out</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Sequential(
+  (0): AdaptiveConcatPool2d(
+    (ap): AdaptiveAvgPool2d(output_size=1)
+    (mp): AdaptiveMaxPool2d(output_size=1)
+  )
+  (1): Flatten(full=False)
+  (2): BatchNorm1d(40, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (3): Dropout(p=0.25, inplace=False)
+  (4): Linear(in_features=40, out_features=512, bias=False)
+  (5): ReLU(inplace=True)
+  (6): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (7): Dropout(p=0.5, inplace=False)
+  (8): Linear(in_features=512, out_features=2, bias=False)
+)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With <code>create_head</code>, we have to specify how many in-channels and how many out-channels we need for our last layer. Optionally, we can change how many additional linear layers (<code>lin_ftrs</code>), how much dropout to use after each one (<code>ps</code>), batch normalization (<code>first_bn</code> and <code>bn_final</code>), and what kind of pooling to use (<code>pool</code> and <code>concat_pool</code>).</p>
+<p>By default, fastai uses <code>AdaptiveConcatPool2d</code> which applies both average pooling and max pooling.</p>
+<p>Additionally, fastai adds two linear layers since having more than one linear layers allow transfer learning to be used more quickly and easily when transferring a pretrained model to a very different domain; one linear layer is unlikely to be enough.</p>
+<p>To get the new body, we use the <code>create_body</code> function:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">arch</span><span class="p">,</span> <span class="n">cut</span> <span class="o">=</span> <span class="n">resnet50</span><span class="p">,</span> <span class="n">model_meta</span><span class="p">[</span><span class="n">resnet50</span><span class="p">][</span><span class="s1">&#39;cut&#39;</span><span class="p">]</span>
+<span class="n">create_body</span><span class="p">(</span><span class="n">arch</span><span class="p">,</span> <span class="n">cut</span><span class="o">=</span><span class="n">cut</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Output" data-close="Show Output"></summary>
+        <p>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Sequential(
+  (0): Conv2d(3, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
+  (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (2): ReLU(inplace=True)
+  (3): MaxPool2d(kernel_size=3, stride=2, padding=1, dilation=1, ceil_mode=False)
+  (4): Sequential(
+    (0): Bottleneck(
+      (conv1): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv3): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn3): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+      (downsample): Sequential(
+        (0): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+        (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      )
+    )
+    (1): Bottleneck(
+      (conv1): Conv2d(256, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv3): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn3): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+    )
+    (2): Bottleneck(
+      (conv1): Conv2d(256, 64, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv3): Conv2d(64, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn3): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+    )
+  )
+  (5): Sequential(
+    (0): Bottleneck(
+      (conv1): Conv2d(256, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv3): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+      (downsample): Sequential(
+        (0): Conv2d(256, 512, kernel_size=(1, 1), stride=(2, 2), bias=False)
+        (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      )
+    )
+    (1): Bottleneck(
+      (conv1): Conv2d(512, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv3): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+    )
+    (2): Bottleneck(
+      (conv1): Conv2d(512, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv3): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+    )
+    (3): Bottleneck(
+      (conv1): Conv2d(512, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv3): Conv2d(128, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn3): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+    )
+  )
+  (6): Sequential(
+    (0): Bottleneck(
+      (conv1): Conv2d(512, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+      (downsample): Sequential(
+        (0): Conv2d(512, 1024, kernel_size=(1, 1), stride=(2, 2), bias=False)
+        (1): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      )
+    )
+    (1): Bottleneck(
+      (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+    )
+    (2): Bottleneck(
+      (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+    )
+    (3): Bottleneck(
+      (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+    )
+    (4): Bottleneck(
+      (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+    )
+    (5): Bottleneck(
+      (conv1): Conv2d(1024, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv3): Conv2d(256, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn3): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+    )
+  )
+  (7): Sequential(
+    (0): Bottleneck(
+      (conv1): Conv2d(1024, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv3): Conv2d(512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn3): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+      (downsample): Sequential(
+        (0): Conv2d(1024, 2048, kernel_size=(1, 1), stride=(2, 2), bias=False)
+        (1): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      )
+    )
+    (1): Bottleneck(
+      (conv1): Conv2d(2048, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv3): Conv2d(512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn3): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+    )
+    (2): Bottleneck(
+      (conv1): Conv2d(2048, 512, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv3): Conv2d(512, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False)
+      (bn3): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+    )
+  )
+)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+</p>
+    </details>
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Before covering <code>unet_learner</code>, let's talk about generative vision models.</p>
+<p>Generative vision models are different from regular classification models in that we're trying to predict an <em>image</em>, not <em>labels</em>.</p>
+<p>Some generative vision models include <em>segmentation</em>, where you predict an image where each pixel is given a label; <em>super-resolution</em> where you increase the resolution of an image; <em>colorization</em> where you add colour to a greyscale image; and <em>style transfer</em> where you convert an image to a different style, like from a picture to a painting.</p>
+<p>So, here comes unet, which gets its name from its shape: a U.</p>
+<p><code>unet_learner</code> takes the body of a desired architecture, like resnet, and then concatenate a new head, which performs the generative task.</p>
+<p>How would we create the new head? One way, called <em>nearest neighbour interpolation</em>, would be to take each pixel and replace it with four new pixels of the same value. Then this nearest neighbour interpolation layer would be interspersed between stride-1 convolutional layers. In a way, you can think of it as upscaling the image (nearest neighbour interpolation), and letting the model learn how to upscale the image (stride-1 convolutional layers).</p>
+<figure>
+    <img src="https://i.makeagif.com/media/12-29-2016/DhK9ZZ.gif" alt="Nearest neighbour interpolation" />
+    <figcaption>Zoom in (nearest neighbour interpolation) and enhance (stride-1 convolutional layers). You probably wouldn't want to use this in an actual crime investigation unless it was really accurate.</figcaption>
+</figure><p>Another approach is called <em>transposed convolution</em> where instead of downscaling with strides, we upscale by adding a zero padding around all pixels in the input; hence, this approach is also called <em>stride-half convolution</em>. To implement transposed convolution, you can pass <code>transpose=True</code> to <code>ConvLayer</code>. Transposed convolution looks like this:</p>
+<figure>
+    <img src="https://i.stack.imgur.com/f2RiP.gif" alt="transposed convolution" />
+    <figcaption>A zero padding (dotted white squares) are added around each pixel in the input (blue) to create a new, upscaled image (cyan) through a stride-half convolution.</figcaption>
+</figure><p>However, neither of these methods work really well for training a model, but they do show how we can upscale an image. Why wouldn't they work well? Because we're trying to upscale with a really small image from our body's output.</p>
+<p>Like resnet, unet incorporates <em>skip connections</em> by skipping the activations in the <em>body</em> of the resnet to the activations of the transposed convolution on the new <em>head</em> of the architecture:</p>
+<figure>
+    <img src="https://lmb.informatik.uni-freiburg.de/people/ronneber/u-net/u-net-architecture.png" alt="unet" />
+    <figcaption>Example of what a unet could look like. Activations from the CNN (left half) are "skipped" to the upscale process (right half).</figcaption>
+</figure><p>The above image gives an idea of what the unet could look like; however, it's using a normal CNN instead of a resnet since the idea of resnet came after this image. With this image, we have 2 $\times$ 2 max pooling layers ("max pool 2x2"; red arrows) instead of stride-2 convolutions; transposed convolutions ("up-conv"; green arrows); and skip ("cross") connections ("copy and crop"; grey arrows).</p>
+<p>Through skip connections, the input to the transposed convolutions aren't just the lower-resolution images from the previous layer, but also the higher-resolution images from the opposite side (the body).</p>
+<p>The only downside with unets, like normal CNNs, is that they're dependent on the image size. So, <code>unet_learner</code> uses a <code>DynamicUnet</code> class that automatically generates an architecture of the right size based on the given data.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Natural-Language-Processing">Natural Language Processing<a class="anchor-link" href="#Natural-Language-Processing"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We apply the same thing of body and head with NLP. Here, we have a pretrained AWD-LSTM language model that we want to use for classification. We don't have a <code>model_meta</code> for NLP since we mainly use AWD-LSTM. Instead, we just select the stacked RNN for the encoder in the language model, which is just a single PyTorch module (the body). We remove the head that takes the activations from the body and maps it to a word in the vocab. Ultimately, we're left with a model that can take give an activation for each word in a given sequence.</p>
+<p>To fine-tune this model for text classification, we use <em>BPTT for Text Classification</em> (BPT3C):</p>
+<p>At each epoch (where we call <code>forward</code> in our <code>Module</code> subclass), we get a document <code>x</code> that's divided into fixed-length batches of size <code>b</code> (<code>n</code> $\times$ <code>b</code>). We have a <code>for</code> loop, which loops over each batch. At the beginning of each batch, the model is initialized with the final state of the previous batch; the activations of each batch are stored for average and max concatenated pooling. Then, gradients are back-propagated to the batches whose hidden states contributed to the final prediction (but in practice, we use variable length backpropagation for truncated-BPTT to avoid GPU memory overload and exploding gradients).</p>
+<p>Similar to computer vision, we add linear layers to the head of the model for classification instead of predicting the next word. We even apply average and max concatenated pooling, except we pool over RNN sequences instead of CNN grid cells.</p>
+<p>What fastai does in <code>DataLoaders</code> for BPT3C is ensure each sequence in <code>x</code> are of size <code>b</code> by padding them with a special token called <code>xxpad</code>. To be efficient, the texts are sorted so that we minimize the number of <code>xxpad</code> tokens used by having texts of already similar sizes in the same batch.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Tabular">Tabular<a class="anchor-link" href="#Tabular"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Tabular domains are kind of special in that we can't really apply transfer learning. Instead, for tabular data sets (and collaborative filtering using deep learning), we use fastai's <code>TabularModel</code>. In its <code>forward</code> function, we have:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_cat</span><span class="p">,</span> <span class="n">x_cont</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_emb</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="p">(</span><span class="n">x_cat</span><span class="p">[:,</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">embeds</span><span class="p">)]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">emb_drop</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cont</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bn_cont</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="n">x_cont</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bn_cont</span><span class="p">(</span><span class="n">x_cont</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">x_cont</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_emb</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">x_cont</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+<p>Where we check if there's embeddings for the categorical variables:</p>
+<div class="highlight"><pre><span></span><span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_emb</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+</pre></div>
+<p>If there is, then we get the activations from each embedding, concatenate them into a single tensor, and then apply dropout:</p>
+<div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="p">(</span><span class="n">x_cat</span><span class="p">[:,</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">embeds</span><span class="p">)]</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">emb_drop</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+<p>Similarly for the continuous variables, we check if there is any:</p>
+<div class="highlight"><pre><span></span><span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cont</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+</pre></div>
+<p>Then if there is, we apply batchnorm if toggled, then concatenate the activations for the categorical and continuous inputs:</p>
+<div class="highlight"><pre><span></span><span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bn_cont</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="n">x_cont</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bn_cont</span><span class="p">(</span><span class="n">x_cont</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">x_cont</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_emb</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">x_cont</span>
+</pre></div>
+<p>Finally, we pass these activations into the layers of the model (batchnorm, dropout, and linear layers):</p>
+<div class="highlight"><pre><span></span><span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Practical-deep-learning">Practical deep learning<a class="anchor-link" href="#Practical-deep-learning"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now that we've covered most of the theory in the fastai course, we move onto practical deep learning. In theory, you have unlimited data, memory, and time. In this case, you train a huge model on all the data for a long time to get the ultimate model. However, we're limited in practice, so we have to find ways to get more data, make our models more efficient and more effective.</p>
+<p>So, we first need to get our model to overfit since that means we're reaching the limit of our model with our current data, memory, and time.</p>
+<p>To improve our training, we have to:</p>
+<ol>
+<li>Get, or create, more data: we can simply get more data, but sometimes we can't; so, we can add more labels to our existing data that creates additional tasks for our model to solve.</li>
+<li>Create more data through data augmentation: maybe creating more labels isn't enough; then, we can create additional synthetic data through more or different data augmentation techniques. With computer vision, Mixup tends to work very well.</li>
+<li>More generalizable architecture: we've gotten as much data as we can and we're taking advantage of all labels we can use, but we're still overfitting. Now we can actually start making changes to the model itself. We begin by thinking of ways to have a more generalizable architecture. The most basic way would be to add batch normalization.</li>
+<li>More regularization applications: so, having more generalizability was <em>still</em> not enough; okay, let's try regularization. We can try adding dropout to the last layer or two (or more like in AWD-LSTM). In general, a model with more regularization is more flexible and more accurate than a smaller model with less regularization.</li>
+<li>Simpler architectures: we leave this stage for last; if having more data and label applications, adding more generalizability, and regularization all didn't help with overfitting, maybe our model is too complicated for our task. As our final struggle, we'll move onto a smaller version of our chosen architecture, or even a simpler one in general. </li>
+</ol>
+<p>Overall, we don't want to start at step 5 and move up (unless it's taking up too much time or memory with your current architecture); we want to begin at the top and make our way down: reducing the size of your model reduces the capability of your model to learn subtle relationships in your data.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>With computer vision and NLP, we often use transfer learning instead of training from scratch since we'll usually get better results while being able to use less data and spend less time, money, and effort with getting started. In fine-tuning our pretrained models, we have to cut the head off and add a new head to the pretrained body (the body is called encoder for language models). Often, the body is two linear layers with average and max concatenated pooling, dropout, and batchnorm mixed in.</p>
+<p>For NLP, we also have to apply truncated-BPTT before the new head since we're no longer predicting the next word, but classifying the text. Truncated-BPTT will give us activations for each batch where each batch's activations <em>remembers</em> something from the preceding batches. These activations are then passed to the new head.</p>
+<p>With tabular data, we can't really apply transfer learning since the tasks tend to be very different from one data set to the other. So, we just covered how fastai's <code>TabularModel</code> works by going over its <code>forward</code> function. Overall, we prepare the activations for the categorical and continuous variables before passing them into the layers of the model.</p>
+<p>Lastly, we went over how to train deep learning models in practice. We want to get into a state where we overfit with our model before we try anything else. Then, we follow a procedure of getting more data, applying data augmentation, adding more generalizability, implementing regularization, and finally, reducing architecture complexity. Ideally, we only move to smaller models when we run out of time or memory.</p>
+<p>In the next blog, I'll remake the Siamese pair model for pet breeds we did <a href="https://geon-youn.github.io/DunGeon/vision/2022/02/21/Pet-Breeds.html">here</a>. Instead of having two passes to the model and comparing output labels, we'll have a single model that takes in two images and tells us if they're of the same breed. We'll review fastai's mid-level API and fine-tune the resnet architecture using the method we discussed here. We'll also have to go over how the Learner's <em>splitter</em> works since we optimize the head and body differently for the first few epochs.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><a class="u-url" href="/DunGeon/fastai/2022/05/09/Fine-Tuning.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/DunGeon/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/DunGeon/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/DunGeon/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>The DunGeon that holds ipynbs</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/geon-youn" target="_blank" title="geon-youn"><svg class="svg-icon grey"><use xlink:href="/DunGeon/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/griolu" target="_blank" title="griolu"><svg class="svg-icon grey"><use xlink:href="/DunGeon/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
