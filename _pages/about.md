@@ -3,6 +3,5 @@ layout: page
 title: About Me
 permalink: /about/
 ---
-## Hello!
 
-My name is Geon and I am an 18 year old Korean-Canadian. I graduated Westdale S.S. in 2021 and am currently attending McMaster University for computer science. I started [fast.ai](https://www.fast.ai/) when I was in 12th grade and here I am continuing to learn about deep learning and now I am starting a blog. 
+My name's Geon and I'm an 18 year old Korean-Canadian. I graduated Westdale S.S. in 2021 and am currently attending McMaster University for computer science. I started [fastai](https://www.fast.ai/) when I was in 12th grade and I'm continuing to learn about deep learning. If you would like to contact me, reach out through my twitter @griolu or my discord Geon#4450. 
