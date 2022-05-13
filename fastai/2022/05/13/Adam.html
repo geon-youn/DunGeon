@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Gradient descent with Adam | DunGeon</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Gradient descent with Adam" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="SGD, but with adaptive moms." />
+<meta property="og:description" content="SGD, but with adaptive moms." />
+<link rel="canonical" href="https://geon-youn.github.io/DunGeon/fastai/2022/05/13/Adam.html" />
+<meta property="og:url" content="https://geon-youn.github.io/DunGeon/fastai/2022/05/13/Adam.html" />
+<meta property="og:site_name" content="DunGeon" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-05-13T00:00:00-05:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Gradient descent with Adam" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-05-13T00:00:00-05:00","datePublished":"2022-05-13T00:00:00-05:00","description":"SGD, but with adaptive moms.","headline":"Gradient descent with Adam","mainEntityOfPage":{"@type":"WebPage","@id":"https://geon-youn.github.io/DunGeon/fastai/2022/05/13/Adam.html"},"url":"https://geon-youn.github.io/DunGeon/fastai/2022/05/13/Adam.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/DunGeon/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://geon-youn.github.io/DunGeon/feed.xml" title="DunGeon" /><link rel="shortcut icon" type="image/x-icon" href="/DunGeon/images/icon.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/DunGeon/">DunGeon</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/DunGeon/about/">About Me</a><a class="page-link" href="/DunGeon/search/">Search</a><a class="page-link" href="/DunGeon/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Gradient descent with Adam</h1><p class="page-description">SGD, but with adaptive moms.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-05-13T00:00:00-05:00" itemprop="datePublished">
+        May 13, 2022
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      8 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/DunGeon/categories/#fastai">fastai</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-justify-center">
+          <div class="px-2">
+
+    <a href="https://github.com/geon-youn/DunGeon/tree/master/_notebooks/2022-05-13-Adam.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/DunGeon/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/geon-youn/DunGeon/master?filepath=_notebooks%2F2022-05-13-Adam.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/DunGeon/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/geon-youn/DunGeon/blob/master/_notebooks/2022-05-13-Adam.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/DunGeon/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+          <div class="px-2">
+  <a href="https://deepnote.com/launch?url=https%3A%2F%2Fgithub.com%2Fgeon-youn%2FDunGeon%2Fblob%2Fmaster%2F_notebooks%2F2022-05-13-Adam.ipynb" target="_blank">
+      <img class="notebook-badge-image" src="/DunGeon/assets/badges/deepnote.svg" alt="Launch in Deepnote"/>
+  </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2022-05-13-Adam.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>An optimizer is a function used in the "step" phase of training where we update the weights based on the gradient of the loss at that point calculated during backpropagation. By default, fastai uses the Adam optimizer.</p>
+<p>To compare Adam with previous optimizers, let's train a model using Adam with the Imagenette data set:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="k">def</span> <span class="nf">get_dls</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">presize</span><span class="p">,</span> <span class="n">resize</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">untar_data</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">Path</span><span class="o">.</span><span class="n">BASE_PATH</span> <span class="o">=</span> <span class="n">path</span>
+    <span class="k">return</span> <span class="n">DataBlock</span><span class="p">(</span>
+        <span class="n">blocks</span><span class="o">=</span><span class="p">(</span><span class="n">ImageBlock</span><span class="p">,</span> <span class="n">CategoryBlock</span><span class="p">),</span> <span class="n">get_items</span><span class="o">=</span><span class="n">get_image_files</span><span class="p">,</span>
+        <span class="n">splitter</span><span class="o">=</span><span class="n">GrandparentSplitter</span><span class="p">(</span><span class="n">valid_name</span><span class="o">=</span><span class="s1">&#39;val&#39;</span><span class="p">),</span>
+        <span class="n">get_y</span><span class="o">=</span><span class="n">parent_label</span><span class="p">,</span> <span class="n">item_tfms</span><span class="o">=</span><span class="n">Resize</span><span class="p">(</span><span class="n">presize</span><span class="p">),</span>
+        <span class="n">batch_tfms</span><span class="o">=</span><span class="p">[</span><span class="o">*</span><span class="n">aug_transforms</span><span class="p">(</span><span class="n">min_scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">resize</span><span class="p">),</span>
+                    <span class="n">Normalize</span><span class="o">.</span><span class="n">from_stats</span><span class="p">(</span><span class="o">*</span><span class="n">imagenet_stats</span><span class="p">)]</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">dataloaders</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">bs</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">dls</span> <span class="o">=</span> <span class="n">get_dls</span><span class="p">(</span><span class="n">URLs</span><span class="o">.</span><span class="n">IMAGENETTE_160</span><span class="p">,</span> <span class="mi">160</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="k">def</span> <span class="nf">get_learner</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">vision_learner</span><span class="p">(</span><span class="n">dls</span><span class="p">,</span> <span class="n">resnet34</span><span class="p">,</span> <span class="n">pretrained</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                       <span class="n">metrics</span><span class="o">=</span><span class="n">accuracy</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">to_fp16</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span> <span class="o">=</span> <span class="n">get_learner</span><span class="p">()</span>
+<span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">3e-3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: left;">
+      <th>epoch</th>
+      <th>train_loss</th>
+      <th>valid_loss</th>
+      <th>accuracy</th>
+      <th>time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>2.515065</td>
+      <td>1.997084</td>
+      <td>0.380892</td>
+      <td>00:48</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>1.837666</td>
+      <td>1.562741</td>
+      <td>0.468790</td>
+      <td>01:01</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>1.487112</td>
+      <td>1.273339</td>
+      <td>0.580637</td>
+      <td>00:51</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="It-all-started-with-SGD">It all started with SGD<a class="anchor-link" href="#It-all-started-with-SGD"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>At the beginning of my fastai journey, I first learned stochastic gradient descent, which I used to train a model on the MNIST data set. SGD looks like</p>
+
+<pre><code>new_weight = weight - lr * weight.grad</code></pre>
+<p>Let's train a model using SGD as its optimizer:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span> <span class="o">=</span> <span class="n">get_learner</span><span class="p">(</span><span class="n">opt_func</span><span class="o">=</span><span class="n">SGD</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">lr</span> <span class="o">=</span> <span class="n">learn</span><span class="o">.</span><span class="n">lr_find</span><span class="p">()</span><span class="o">.</span><span class="n">valley</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYIAAAEKCAYAAAAfGVI8AAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjUuMiwgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy8qNh9FAAAACXBIWXMAAAsTAAALEwEAmpwYAAAnvklEQVR4nO3deXzddZ3v8dfnJCd7mrRN0iVpm25AoWUpAUUUcEAc2a+IODIXUBRRB9SZUeHOY9TLde7Mfcy4ASoCCio4yFRZ3BBx2ASLtAXK3pYuNOmS/WRfzsnn/nFOSwhJmrT5nSXn/Xw88sj57e+c0/4+5/f9/hZzd0REJHuFUh1ARERSS4VARCTLqRCIiGQ5FQIRkSynQiAikuVUCEREslxuqgNMVkVFhdfW1qY6hohIRlm/fn2zu1eONi3jCkFtbS3r1q1LdQwRkYxiZjvGmqamIRGRLKdCICKS5VQIRESyXMb1EYxmcHCQ+vp6+vr6Uh0lZQoKCqipqSEcDqc6iohkmEALgZmVA7cBKwEHPu7ufx42/TTgfmBbYtQv3f36yW6nvr6e0tJSamtrMbNDjZ1x3J2Wlhbq6+tZvHhxquOISIYJ+ojgO8CD7v4hM8sDikaZ5wl3P+dQNtLX15e1RQDAzJg9ezZNTU2pjiIiGSiwPgIzKwNOAX4I4O4D7t4e4PaCWnVGyPa/X2S6+8PLe9nS2BnIuoPsLF4MNAG3m9mzZnabmRWPMt9JZva8mf3OzI4abUVmdqWZrTOzddPhW29JSQkA27dvZ+XKlSlOIyLpzt359J3rWbO+IZD1B1kIcoHVwPfd/TigG7h2xDwbgEXufgxwI3DfaCty91vcvc7d6yorR70wbnI23gPfWglfK4//3njPoa9TRCQgPQMxokNOWWEwJ4MEWQjqgXp3fzoxvIZ4YdjP3TvcvSvx+rdA2MwqAswU3+n/6hqI7AQ8/vtX1xxSMbj22mv57ne/u3/4a1/7Gl//+tc5/fTTWb16NatWreL+++8fdx2xWIwvfvGLnHDCCRx99NH84Ac/AODSSy/lvvvu2z/fJZdccsB1icj0EukdBMi8QuDue4CdZnZ4YtTpwMvD5zGzuZZo3DazExN5WoLKBMAfr4fB3reOG+yNjz9IF198Mffc82Yhueeee7jsssu499572bBhA4888gj/8A//wHiPBf3hD39IWVkZzzzzDM888wy33nor27Zt44orruCOO+4AIBKJ8NRTT3H22WcfdFYRyTxBF4Kgzxq6GrgrccbQVuBjZnYVgLvfDHwI+LSZRYFe4CMe9EOUI/WTGz8Bxx13HI2NjezatYumpiZmzpzJ3Llz+cIXvsDjjz9OKBSioaGBvXv3Mnfu3FHX8dBDD7Fx40bWrFkTjxOJsHnzZs4880w+85nP0NTUxC9+8QsuvPBCcnOnxeUfIjJB+wpBeVEGFgJ3fw6oGzH65mHTbwJuCjLD25TVJJqFRhl/CC666CLWrFnDnj17uPjii7nrrrtoampi/fr1hMNhamtrx73gzd258cYbef/73/+2aZdeeil33nknd999N7fffvsh5RSRzJOxTUNp6/SvQLjwrePChfHxh+Diiy/m7rvvZs2aNVx00UVEIhGqqqoIh8M88sgj7Ngx5o3/AHj/+9/P97//fQYH4x/4pk2b6O7uBuDyyy/n29/+NgBHHnnkIeUUkcyT6U1D6efoD8d///H6eHNQWU28COwbf5COOuooOjs7qa6uZt68eVxyySWce+65rFq1irq6Oo444ohxl//EJz7B9u3bWb16Ne5OZWXl/k7iOXPmsGLFCi644IJDyigimSnSEy8EMwIqBBZ0k/xUq6ur85HPI3jllVdYsWJFihIFr6enh1WrVrFhwwbKysrGnG+6vw8i2eo/fv8a3310C6//y1mEQgd38aiZrXf3kU31QDY2DWWYhx9+mBUrVnD11VePWwREZPqK9A4yoyB80EXgQLKvaSjDnHHGGQfsXxCR6S3SOxjYGUOgIwIRkbQX6R0MrKMYplEhyLS+jqmW7X+/yHSmQjABBQUFtLS0ZO3OcN/zCAoKClIdRUQCEOkdDOyMIZgmfQQ1NTXU19dn9f349z2hTESmn6CPCKZFIQiHw3oyl4hMS+6upiERkWzWPRAjNuSUqxCIiGSnoG8vASoEIiJpbd/tJVQIRESylI4IRESyXKR3AAjuhnOgQiAiktZ0RCAikuWCfjoZqBCIiKS1SO8gOSGjJD+4y75UCERE0lj8FtS5mAVzC2pQIRARSWuR3mig/QOgQiAiktbaewZUCEREsllHwHceBRUCEZG0FvQN50CFQEQkrQX9mEoIuBCYWbmZrTGzV83sFTM7acR0M7MbzGyLmW00s9VB5hERySTuTkdf8J3FQT+P4DvAg+7+ITPLA4pGTP8AsDzx8w7g+4nfIiJZr6s/SmzIM7dpyMzKgFOAHwK4+4C7t4+Y7XzgJx63Fig3s3lBZRIRySTJuL0EBNs0tBhoAm43s2fN7DYzKx4xTzWwc9hwfWLcW5jZlWa2zszWZfPjKEUku7Qn4RbUEGwhyAVWA9939+OAbuDag1mRu9/i7nXuXldZWTmVGUVE0lZH4oggk08frQfq3f3pxPAa4oVhuAZgwbDhmsQ4EZGst/+Gc4V5gW4nsELg7nuAnWZ2eGLU6cDLI2Z7ALg0cfbQO4GIu+8OKpOISCbZ30cQ8OmjQZ81dDVwV+KMoa3Ax8zsKgB3vxn4LXAWsAXoAT4WcB4RkYyRrM7iQAuBuz8H1I0YffOw6Q58NsgMIiKZat8tqIvzcgLdjq4sFhFJU/tuLxHkLahBhUBEJG21J+E+Q6BCICKStjpUCEREslsy7jwKKgQiImlLhUBEJMupEIiIZLGhIVcfgYhINuvsjzLkwV9MBioEIiJpqSNJVxWDCoGISFpK1n2GQIVARCQtJetZBKBCICKSlna0dgNQM7Mw8G2pEIiIpKHNe7soysthfpkKgYhIVtrS2MWyqhJCoWBvOAcqBCIiaWlzYyfLqkqSsi0VAhGRNNPRN8jejn6WV5UmZXsqBCIiaWZLYxcAy3VEICKSnbbsTRSCOSoEIiJZaXNjJ/m5IWpmFiVleyoEIiJpZnNjF0srS8hJwhlDoEIgIpJ2Nu/tSlqzEKgQiIikle7+KA3tvUnrKAYVAhGRtPJ6U7yjeFmSTh0FFQIRkbSyOclnDAHkBrlyM9sOdAIxIOrudSOmnwbcD2xLjPqlu18fZCYRkXS2ubGLcI6xaFZyzhiCgAtBwnvdvXmc6U+4+zlJyCEikva2NHayuKKY3JzkNdioaUhEJI1sbuxK2q0l9gm6EDjwkJmtN7Mrx5jnJDN73sx+Z2ZHjTaDmV1pZuvMbF1TU1NwaUVEUqhvMMYbrT1Ju9ncPkE3Db3b3RvMrAr4g5m96u6PD5u+AVjk7l1mdhZwH7B85Erc/RbgFoC6ujoPOLOISEpsberGPbkdxRDwEYG7NyR+NwL3AieOmN7h7l2J178FwmZWEWQmEZF0tbmxE2D6NA2ZWbGZle57DZwJvDhinrlmZonXJybytASVSUQknW1p7CInZNRWJO+MIQi2aWgOcG9iP58L/MzdHzSzqwDc/WbgQ8CnzSwK9AIfcXc1/YhIVtre0kN1eSH5uTlJ3W5ghcDdtwLHjDL+5mGvbwJuCiqDiEgmqW/rYcGs4J9RPJJOHxURSRP1bb3UlCe3WQhUCERE0kLfYIymzn5qZuqIQEQkK+1q7wWgWoVARCQ71bfFC0Gynko2nAqBiEgaeLMQ6IhARCQr1bf1kBsy5swoSPq2VQhERNJAfVsv88oLkvac4uFUCERE0kBDe2pOHQUVAhGRtFDf1pOS/gFQIRARSbn+aIy9Hf0pOWMIVAhERFJuV3sfkJprCECFQEQk5RpSeOooqBCIiKRcfVsPoEIgIpK16tt6yQkZc1NwDQGoEIiIpFx9Ww9zZxSQm5OaXbIKgYhIitW39aasWQhUCEREUq6hvTdlp46CCoGISEoNRIfY09GnIwIRkWy1O9KLe+quIYAJFgIzKzazUOL1YWZ2npmFg40mIjL9pfL20/tM9IjgcaDAzKqBh4D/CdwRVCgRkWyx7xqCBRnQR2Du3gN8EPieu18EHBVcLBGR7NDQ1kvIYG5Zaq4hgEkUAjM7CbgE+E1iXE4wkUREskd9Wy9zZxQQTtE1BDDxQvB54DrgXnd/ycyWAI8ElkpEJEvEryFIXbMQQO5EZnL3x4DHABKdxs3ufs2BljOz7UAnEAOi7l43YroB3wHOAnqAy919w2T+ABGRTFbf1sM7lsxOaYaJnjX0MzObYWbFwIvAy2b2xQlu473ufuzIIpDwAWB54udK4PsTXKeISMbrG4yxK9JH7ezilOaYaNPQke7eAVwA/A5YTPzMoUN1PvATj1sLlJvZvClYr4hI2tve0g3A4srMKAThxHUDFwAPuPsg4BNYzoGHzGy9mV05yvRqYOew4frEuLcwsyvNbJ2ZrWtqappgZBGR9La9OVEIMuSI4AfAdqAYeNzMFgEdE1ju3e6+mngT0GfN7JSDCenut7h7nbvXVVZWHswqRETSztZEIaitSG1n8YQKgbvf4O7V7n5WohlnB/DeCSzXkPjdCNwLnDhilgZgwbDhmsQ4EZFpb1tTN5Wl+ZQWpPZGDRPtLC4zs2/ua54xs28QPzoYb5liMyvd9xo4k3hH83APAJda3DuBiLvvnvyfISKSeba3dLO4IrXNQjDxpqEfET8N9MOJnw7g9gMsMwf4k5k9D/wF+I27P2hmV5nZVYl5fgtsBbYAtwKfmWR+EZGMta25O+X9AzDB6wiApe5+4bDh/21mz423gLtvBY4ZZfzNw1478NkJZhARmTYivYM0dw2k/IwhmPgRQa+ZvXvfgJmdDPQGE0lEZPrbf8ZQGjQNTfSI4CrgJ2ZWlhhuAy4LJpKIyPS3/xqCTCkE7v48cIyZzUgMd5jZ54GNAWYTEZm2tjZ1YwYLZ6X21FGY5BPK3L0jcYUxwN8HkEdEJCtsa+6muryQgnDqb+R8KPc9tSlLISKSZdLl1FE4tEIwkVtMiIjICO7Otqb0KQTj9hGYWSej7/ANSN0DNkVEMlhz1wCd/dHMKATuXpqsICIi2WLfGUO1aVIIUvdsNBGRLLWtKV4IlqgQiIhkp63N3YRzjOry9GhhVyEQEUmy7c3dLJxVRG4KH1g/XHqkEBHJItua0+eMIVAhEBFJqqEhZ1saXUMAKgQiIkm1K9LLQHSIxRUlqY6ynwqBiEgSbdrbCcDSNLj99D4qBCIiSfRCfQdmcFR12YFnThIVAhGRJHqhoZ0lFcWU5E/0KQDBUyEQEUmiFxoiHF1TnuoYb6FCICKSJI0dfezt6GdlGjULgQqBiEjSvNAQAWCVCoGISHZ6oSES7yiePyPVUd5ChUBEJElebIiwtLKE4jTqKAYVAhGRpNlYH+HoNGsWAhUCEZGkaOzoo7Ez/TqKIQmFwMxyzOxZM/v1KNMuN7MmM3su8fOJoPOIiKTC/o7imvQrBMloqPoc8AowVu/Iz93975KQQ0QkZTbWRwgZHDkvvTqKIeAjAjOrAc4GbgtyOyIi6S5dO4oh+KahbwNfAobGmedCM9toZmvMbMFoM5jZlWa2zszWNTU1BZFTRCRQLzRE0rJZCAIsBGZ2DtDo7uvHme1XQK27Hw38AfjxaDO5+y3uXufudZWVlQGkFREJzt5ER3G6XUi2T5BHBCcD55nZduBu4K/M7M7hM7h7i7v3JwZvA44PMI+ISEq8UJ+eVxTvE1ghcPfr3L3G3WuBjwD/7e5/O3weM5s3bPA84p3KIiLTysaGREdxml1RvE/Sey3M7Hpgnbs/AFxjZucBUaAVuDzZeUREgrZhRxtHzJ1BUV76dRRDkgqBuz8KPJp4/ZVh468DrktGBhGRVIjGhnj2jTYuPL4m1VHGpCuLRUQC9NreTroHYhy/aGaqo4xJhUBEJEDrd7QBqBCIiGSr9TvamDMjn+rywlRHGZMKgYhIgNZtb6Nu0SzMLNVRxqRCICISkD2RPhrae9O6WQhUCEREApMJ/QOgQiAiEph1O1opCIfS9kKyfVQIREQCsmFHG8fUlBPOSe9dbXqnExHJUL0DMV7a1UFdbXo3C4EKgYhIIJ7b2U50yNO+fwBUCEREArHhjXhH8eqFKgQiIllp3fZWllWVUF6Ul+ooB6RCICIyxfoGYzy9rZV3LpmV6igTokIgIjLFntzSTM9AjDOPnJvqKBOiQiAiMsUeemkvpfm5vHPJ7FRHmRAVAhGRKRQbch5+ZS/vPaKKvNzM2MVmRkoRkQyx4Y02WroHOPOoOamOMmEqBCIiU+ihl/aQlxPi1MMqUx1lwlQIRESmiLvz0Mt7edey2ZQWhFMdZ8JUCEREpsimvV3saOnJmLOF9lEhEBGZIg+9tAczOOPIqlRHmRQVAhGRKfLQy3s5bkE5VaUFqY4yKSoEIiJTYE+kjxcaIrwvw5qFQIVARGRK/HlrMwCnHFaR4iSTF3ghMLMcM3vWzH49yrR8M/u5mW0xs6fNrDboPCIiQfjz6y2UFYZZMTe9n0Y2mmQcEXwOeGWMaVcAbe6+DPgW8P+SkEdEZMqt3drKOxbPIhSyVEeZtEALgZnVAGcDt40xy/nAjxOv1wCnm1nmvYsiktUa2nt5o7UnY+4tNFLQRwTfBr4EDI0xvRrYCeDuUSACZOY7KSJZa+3rLQAqBCOZ2TlAo7uvn4J1XWlm68xsXVNT0xSkExGZOmu3tlBeFOaIuaWpjnJQgjwiOBk4z8y2A3cDf2Vmd46YpwFYAGBmuUAZ0DJyRe5+i7vXuXtdZWXm3L9DRLLD2m0tGds/AAEWAne/zt1r3L0W+Ajw3+7+tyNmewC4LPH6Q4l5PKhMIiJTrb6th52tvRnbLASQm+wNmtn1wDp3fwD4IfBTM9sCtBIvGCIiGWPt1lYATlqqQjAud38UeDTx+ivDxvcBFyUjg4hIENZubWFmUZjDqjKzfwB0ZbGIyCFZu7WFdyyenbH9A6BCICJy0Ha29lDf1pvRzUKgQiAictAe2xQ/nT2TO4pBhUBE5KD0Dcb43iNbWFk9g8PmlKQ6ziFRIRAROQg/enIbuyJ9/K+zVpDpd8ZRIRARmaSWrn6+98jrnLGiinctzbzbTo+kQiAiMknf+eNmegdjXPuBFamOMiVUCEREJuH1pi7uevoNPnriQpZVZXbfwD4qBCIik/DvD75GYTiHz52xPNVRpowKgYjIBG1p7OTBl/bw8ZNrqSjJT3WcKaNCICIyQT94bCsF4RCXvas21VGmVFYVAt3YVEQO1u5IL/c918CH6xYwexodDUAWFYLnd7bzoZv/TEtXf6qjiEgG+tGftjHk8Mn3LEl1lCmXNYXAgRcbInzqp+vpj8ZSHUdEMkikZ5CfPf0GZ6+ax4JZRamOM+WyphAcu6Ccb374WNbtaOPLazaqmUhEJuzOp3fQPRDjU6dOv6MByKJCAHD20fP4xzMP477ndnHDH7ekOo6IZICu/ii3P7mNUw+r5Kj5ZamOE4ikP6Es1T773mVsbe7mWw9vYk9HHx86vprVC2dm/L1CRCQY33xoE81dA9PquoGRsq4QmBn/+sFVhEMh7n22nv/8yxssmFXIR09cxMffXUt+bk6qI4pImnihPsIdT23jkncsZPXCmamOExjLtLbyuro6X7du3ZSsq6s/yu9f3MMvn63nyS0tLK4o5qvnHslph1dNyfpFJHNFY0Nc8L0n2dvRz8N/fyplheFURzokZrbe3etGm5Z1RwTDleTncuHxNVx4fA2Pb2riaw+8xOW3P8NZq+byzQ8fS0FYRwfZZjA2xOtNXeyO9DF3RgE1MwspLXj7DiAaG6K5a4DtLd2s39HG+h1tvLyrg6oZ+SyvKuWwOSUcu6Cc1YtmEs6Zxl1xG++BP14PkXooq4HTvwJHfzjVqabET/68gxcbOrjpo8dlfBE4kKwuBMOdclglv/v8e7jlsa184w+bmFX8Ml+/YFWqY8kENHf1s3lvF42dfbR0DdDS3U9RXi7V5YVUzyykuryQqtJ8chM75KEhp6G9ly2NXdS39dDQ3seu9l5eb+pi894uBmJDb1l/WWGYorwcQmbk5hjd/VFaugcYfjC9rKqEdy6ZRXPXAE9sbuIXG+oBKM7L4aSlFRw5r5SOviit3QN090c5Yl4pdbWzWL1w5v6djLvT2R9ld3sfuyK9NHX2EzIjnGOEc0LkhOKvc0IhYkNDdPZF6eqP0tMfIzrkDLkTG4r/uDtDDvm5IWYW5zGrOI/ywjB5uSHyc3Mwgx0tPWxu7GRzYxfR2BCzEvNVlOQzvzz+vs0rKyBktn/9MwrCFOYlviBtvAd+dQ0M9saHIzvjw5DxxaChvZdvPPQapx1eydmr5qU6TuBUCIbJz83h6tOX09kf5ZbHt3JC7SzOP7Y61bEy1tCQ0zsYYyixUxqMDdHeM0Br9yDtPQOUFORSVZpPZUkBO9t6eGxTE4+91sT2lm4On1vKquoyjpw/g6rSAmYU5jKjIExL1wCv7e1k095OXt3TySu7O2jqfOtFgjkhIzbkbxs3pzSfsqI8drR00zPw5rUk4RxjXlkhi2YXcfnJtayYV0rNzCL2dvSxs7WXhvYe+geHiCV2tEV5OVSWFlBVmk/1zEKOrSlnZnHeW7bX1j3A09taeXxzE49vauLhV/ZSWpDL7OI88nNzeGxTE9995HXMIC8nRDSxA58qZhCyt78Po823YGYRBeEQ63e009YzcMBlyovCzJ1RwE87/4nKWO9bJw720vvgV9k55wNUleZTVhjOuBMxuvqjfOLH6zAz/s/5KzMu/8HI6j6CsQzGhvjorWt5aVcHD/zdu0e91Wx/NEZb9yBzywoCzTJce88AD764h5yQcd6x89/SsT0YG+LJLc109Uf3j2vu7GdrczevN3XR1RflmAXlHL9oJifUzmJ+eeG42+roG+SpLc00dfbT1jNIe88g+eEQFSX5VJTkMa+skMUVxVSU5GFm9A3GeGV3By/u6uDlXR28uqeD1/Z0vmWHOxErq2ewvKqU1/bEd/bRMXZKebkhllWWsGLeDFbMK+XwuaXMnVFARUl859MXjbGrvY+G9l4a2nrZHemlob2X9p5BFs4q4rA5pSyrKqF2dhEVJfmEQsH9Z/dEAckd1kTUMxDluZ3tbNjRRmd/lHAo/o2/OD+HeWWFzC8voKq0AHcYHBpiMDZENBZfT3TIyQkZpQW5lObnUpiXQ24oRCgEOWbkhGz/zqs/GqO9Z5DW7gHaewYZiA0xGB0iOjREzcwillaWvPkNn3jxbusZ2P++7e3oAyAnJ0TIoL1nkN2RXna393Hr9vcR4u2fz5AbS/rv2v85zSgIJ45kjOK8XFZWl7F6UTmrF85keVXJW96XVIvGhvjET9bxxOZmfnT5CZx6WGWqI02Z8foIVAjGsCfSx1k3PEFFSR73fOokyove/Ma3bnsrX/rFRrY2dXPa4ZVcc/rywM4o2BPp4+ltLfzq+d08tqmRwVj885ozI58rT1nK+1bM4d5nG7jr6R00dr799hml+bksqSymMC+HjfWR/TvmldUzOPfo+ZxzzHzmlxXQMxCjvXeQF+oj3P9cA398tZGB6JtNJMV5OfRHh962Yy7Nz6WiNJ83Wnv2f5MsKwxzxNxSVsybwbyygv07ptyQxZspivIoKwzT2T9IU2c/TZ39zCrO4z3LK6ksffMeLv3RGFsau2jrHqSjb5CO3kFmFIY5fG4pi2YVpdUOJCt9a2W8OWiE/uJqfn/mwzR29NHU2U9HX5RobIjYkNPeO8hzO9tp7R4A4oXi8DmlHDlvBqtqyjhx8SyWVZYEWpjH4u788/0vcufaN/i//2MVH33HwqRnCFJKCoGZFQCPA/nEm6DWuPtXR8xzOfDvQENi1E3uftt4601WIQB4YnMTl/3oL+TmhDjzyDl8cHU1T2xu5o6ntjO/rJBzj5nPz595g7aeQd6zvIKPn7yYUw6rJOcA/4ibu/r5xfp6frmhgZbufsyMkEFBOIeKknxmF+eRlxvi+fp2drbGD73nzMjnvGPmc/6x1UR6B7nxvzezdmvr/nWeelglf/vORdTOjl/+7kB5YZjK0vz93w6jsSFe3dPJn19v4dcv7Ob5ne1AvGlkX4EBqCjJ45yj53PO0fNYOLuI8sJ4Hncn0jtIc1c/De19bGvqYmtzN40d/SyfU8JR88tYWT2D6vLCrDicznoj+wgAwoVw7g3j9hG4O2+09vDsG+28vDt+BPnSrghtPYMAzCwKc0LtLE5aOpuTls7msKrSQAtDc1c/a7e28PDLe7nvuV186tQlXDdNnjw2XKoKgQHF7t5lZmHgT8Dn3H3tsHkuB+rc/e8mut5kFgKAl3ZFuOeZndz//C7aE/9QLztpEV/66yMozs+luz/KnWt3cOsT22ju6qe6vJCPnLCAUw+vZF5ZIbOL84i589qeTp7d2c6Tm5v546t7GYw5dYtmcvjcUoY8/p+jeyBGS1c/LV0DdA9EWVVdRl3tLOoWzWRlddnbCswz21t5ZnsrH1g5j8UVxZP+295o6eE3L+ymo2+Q8sIw5UVhFsws4sTFs/RtWyZmis4acnd2tPTwl+2tPLOtlae3tfJGaw8QLwwVJfkU5eVQmJdDQTiHvJwQ+eEcchP9QTF3cChLzFtZksfSqviZW0V58a7QV3Z3cO+zDTz6WiP90aF4s1tsiN2RePNXSX4uF66u5qvnHpWSI5KgpbxpyMyKiBeCT7v708PGX06aF4J9+qMxntjUTGVpPscsKH/b9IHoEH94eS8/+8sOntzSsn98Xk4IM+hPNLNUlsa/2f/NiQtYVlWarPgiGae+rYc/v97C+h1tRHoH6RmI0TMQpT86xEB0KNFUOUSO2f4dd3vPIG09b57RlRMyjphbSmzIeXVPJ7kh413LKphZFCZkhln8jK+TlsxmVXXZtP4ClLJCYGY5wHpgGfBdd//yiOmXA/8KNAGbgC+4+9sbHYdJVSGYjJ2tPby6p5Nd7b3sivQSizlHLyjnuAXl1MxUs4lIkKKxIVq7B3hpdwcbEtd4DESHOPeY+Zx7zHxmjTjDK1ukwxFBOXAvcLW7vzhs/Gygy937zexTwMXu/lejLH8lcCXAwoULj9+xY0fgmUVEppPxCkFSjoPcvR14BPjrEeNb3H3fqS63AcePsfwt7l7n7nWVldPndC4RkXQQWCEws8rEkQBmVgi8D3h1xDzDL9k7D3glqDwiIjK6IK8sngf8ONFPEALucfdfm9n1wDp3fwC4xszOA6JAK3B5gHlERGQUuqBMRCQLpLyPQERE0pcKgYhIllMhEBHJcioEIiJZLuM6i82sCdh3RVkZEBnn9chxYaB5kpscvo6JTBs5bqzh8fJWTDLneBkPJud42Q4244FyTmXGfeP0eU8sZ6Z+3qPlncr3crp93uXuPvqFWO6esT/ALeO9HjmO+GmrB72NiUwbOW6s4fHyTjbneBkPJucBsh1Uxql+L/V56/MO+r2crp/3aD+Z3jT0qwO8Hmv6wW5jItNGjhtr+EB5J+NAy00253jZDjbjgZadyowH2tZ49HmP/vtgBP15D3+tz3v8ceOuI+Oahg6Fma3zMc6jTSeZkFMZp04m5MyEjJAZOdMxY6YfEUzWLakOMEGZkFMZp04m5MyEjJAZOdMuY1YdEYiIyNtl2xGBiIiMoEIgIpLlVAhERLKcCkGCmb3HzG42s9vM7KlU5xmNmYXM7F/M7EYzuyzVecZiZqeZ2ROJ9/O0VOcZi5kVm9k6Mzsn1VnGYmYrEu/jGjP7dKrzjMbMLjCzW83s52Z2ZqrzjMbMlpjZD81sTaqzDJf4N/jjxPt3SapyTItCYGY/MrNGM3txxPi/NrPXzGyLmV073jrc/Ql3vwr4NfDjdMwInA/UAINA/VRnnMKcDnQBBUHknKKMAF8G7pnqfMPyTMW/y1cS/y4/DJycphnvc/dPAlcBF6dpxq3ufsVUZxvNJPN+EFiTeP/OS0a+UU32asF0/AFOAVYDLw4blwO8DiwB8oDngSOBVcR39sN/qoYtdw9Qmo4ZgWuBTyWWXZOu7yUQSiw3B7grTTO+D/gI8YchnZOu72VimfOA3wEfTdeMieW+AaxO84yB/L85hLzXAccm5vlZ0NnG+gnyCWVJ4+6Pm1ntiNEnAlvcfSuAmd0NnO/u/wqM2hRgZguBiLt3pmNGM6sHBhKDsanOOFU5h2kD8tMxY6LJqpj4f8ZeM/utuw+lW87Eeh4AHjCz3wA/S7eMZmbAvwG/c/cNU5lvqjIm02TyEj9irgGeI4UtNNOiEIyhGtg5bLgeeMcBlrkCuD2wRG832Yy/BG40s/cAjwcZbIRJ5TSzDwLvB8qBmwJN9qZJZXT3fwIws8uB5qkuAuOY7Ht5GvHmg3zgt0EGG2ay/y6vBs4AysxsmbvfHGS4hMm+j7OBfwGOM7PrEgUjmcbKewNwk5mdzaHdzuOQTOdCMGnu/tVUZxiPu/cQL1Zpzd1/SbxopT13vyPVGcbj7o8Cj6Y4xrjc/QbiO7S05e4txPsw0oq7dwMfS3WOadFZPIYGYMGw4ZrEuHSSCRkhM3JmQkbIjJzKOPXSOu90LgTPAMvNbLGZ5RHvGHwgxZlGyoSMkBk5MyEjZEZOZZx66Z03Vb3UU9xL/5/Abt48rfKKxPizgE3Ee+v/SRmnR85MyJgpOZVRed1dN50TEcl207lpSEREJkCFQEQky6kQiIhkORUCEZEsp0IgIpLlVAhERLKcCoFMC2bWleTtTckzKyz+7IaImT1nZq+a2X9MYJkLzOzIqdi+CKgQiIzKzMa9D5e7v2sKN/eEux8LHAecY2YHeu7ABcTvmioyJVQIZNoys6Vm9qCZrbf4E9OOSIw/18yeNrNnzexhM5uTGP81M/upmT0J/DQx/CMze9TMtprZNcPW3ZX4fVpi+prEN/q7ErdlxszOSoxbb2Y3mNmvx8vr7r3Eb0dcnVj+k2b2jJk9b2a/MLMiM3sX8ecT/HviKGLpWH+nyESpEMh0dgtwtbsfD/wj8L3E+D8B73T344C7gS8NW+ZI4Ax3/5vE8BHEb6l9IvBVMwuPsp3jgM8nll0CnGxmBcAPgA8ktl95oLBmNhNYzpu3GP+lu5/g7scArxC/VcFTxO9R80V3P9bdXx/n7xSZEN2GWqYlMysB3gX8V+ILOrz5kJwa4OdmNo/406K2DVv0gcQ3831+4+79QL+ZNRJ/6trIx2/+xd3rE9t9Dqgl/qjOre6+b93/CVw5Rtz3mNnzxIvAt919T2L8SjP7OvHnOpQAv5/k3ykyISoEMl2FgPZE2/tINwLfdPcHEg9++dqwad0j5u0f9jrG6P9nJjLPeJ5w93PMbDGw1szucffngDuAC9z9+cQDdE4bZdnx/k6RCVHTkExL7t4BbDOziyD+OEUzOyYxuYw37wV/WUARXgOWDHtk4QEf6p44evg34MuJUaXA7kRz1CXDZu1MTDvQ3ykyISoEMl0UmVn9sJ+/J77zvCLR7PIS8WfEQvwI4L/MbD3QHESYRPPSZ4AHE9vpBCITWPRm4JREAfln4GngSeDVYfPcDXwx0dm9lLH/TpEJ0W2oRQJiZiXu3pU4i+i7wGZ3/1aqc4mMpCMCkeB8MtF5/BLx5qgfpDaOyOh0RCAikuV0RCAikuVUCEREspwKgYhIllMhEBHJcioEIiJZToVARCTL/X/oB4Ge8KiKLAAAAABJRU5ErkJggg==
+" />
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">moms</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: left;">
+      <th>epoch</th>
+      <th>train_loss</th>
+      <th>valid_loss</th>
+      <th>accuracy</th>
+      <th>time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>3.060603</td>
+      <td>3.215654</td>
+      <td>0.239490</td>
+      <td>00:46</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>2.578725</td>
+      <td>1.890918</td>
+      <td>0.344968</td>
+      <td>00:46</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>2.359712</td>
+      <td>1.807126</td>
+      <td>0.377580</td>
+      <td>00:47</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="How-to-create-different-optimizers">How to create different optimizers<a class="anchor-link" href="#How-to-create-different-optimizers"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Unlike previous deep learning libraries, fastai was innovative in that it allowed for callbacks in basically any part of the training process, allowing users to tweak the training process without having to change the actual library code.</p>
+<hr />
+<p>A callback is a piece of code that you write and inject somewhere in another piece of code.</p>
+<hr />
+<p>We can create different optimizers through <em>optimizer callbacks</em>, which allow us to change how the optimizer takes a step during the optimization step of the deep learning training cycle.</p>
+<p><code>Optimizer</code> is a class provided by fastai that has two major functions, <code>zero_grad</code> and <code>step</code>:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">p</span><span class="p">,</span><span class="o">*</span><span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_params</span><span class="p">(</span><span class="n">with_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">detach_</span><span class="p">()</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closure</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">closure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;fastai optimizers currently do not support closure&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">p</span><span class="p">,</span><span class="n">pg</span><span class="p">,</span><span class="n">state</span><span class="p">,</span><span class="n">hyper</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_params</span><span class="p">(</span><span class="n">with_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">cb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cbs</span><span class="p">:</span> <span class="n">state</span> <span class="o">=</span> <span class="n">_update</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">cb</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="n">state</span><span class="p">,</span> <span class="o">**</span><span class="n">hyper</span><span class="p">}))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span>
+</pre></div>
+<p>When we update the gradients, we take a step using <code>step</code> and then zero the gradients using <code>zero_grad</code>, which are both automatically done by fastai's <code>Learner</code>.</p>
+<p>We can initialize <code>Optimizer</code> with a list of callbacks <code>cbs</code> that can update <code>state</code>. <code>state</code> is a dictionary that allows us to store variables as if we could update the code.</p>
+<p>Optimizer callbacks should ultimately update the parameters, shortened to <code>p</code> in the code. Then, using <code>state</code>, we can store intermediate values between different callbacks.</p>
+<p>So, we can create our own SGD like so and be able to get a similar result as before:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="k">def</span> <span class="nf">sgd_cb</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> 
+    <span class="n">p</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=-</span><span class="n">lr</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">opt_func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">Optimizer</span><span class="p">,</span> <span class="n">cbs</span><span class="o">=</span><span class="p">[</span><span class="n">sgd_cb</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span> <span class="o">=</span> <span class="n">get_learner</span><span class="p">(</span><span class="n">opt_func</span><span class="o">=</span><span class="n">opt_func</span><span class="p">)</span>
+<span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">1.5e-2</span><span class="p">,</span> <span class="n">moms</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: left;">
+      <th>epoch</th>
+      <th>train_loss</th>
+      <th>valid_loss</th>
+      <th>accuracy</th>
+      <th>time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>3.076169</td>
+      <td>3.106647</td>
+      <td>0.225987</td>
+      <td>00:45</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>2.625497</td>
+      <td>1.887920</td>
+      <td>0.358981</td>
+      <td>00:47</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>2.376982</td>
+      <td>1.792544</td>
+      <td>0.380382</td>
+      <td>00:46</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Adding-momentum-(SGD-with-momentum)">Adding momentum (SGD with momentum)<a class="anchor-link" href="#Adding-momentum-(SGD-with-momentum)"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If our loss function is really noisy, the gradients may be constantly changing directions, which is bad. Instead, what if we "soften" the loss by forcing the gradients to change direction more slowly?</p>
+<p>Momentum, according to the Cambridge dictionary, is a "force that keep an object moving". In terms of gradient descent, it's like continuing to descend in the previous direction for a while, rather than instantaneously changing direction. So, if we previously had:</p>
+<div class="highlight"><pre><span></span><span class="n">new_weight</span> <span class="o">=</span> <span class="n">weight</span> <span class="o">-</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">weight</span><span class="o">.</span><span class="n">grad</span>
+</pre></div>
+<p>Then we can add momentum by incorporating the previous gradients:</p>
+<div class="highlight"><pre><span></span><span class="n">weight</span><span class="o">.</span><span class="n">avg</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">weight</span><span class="o">.</span><span class="n">avg</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span> <span class="o">*</span> <span class="n">weight</span><span class="o">.</span><span class="n">grad</span>
+<span class="n">new_weight</span> <span class="o">=</span> <span class="n">weight</span> <span class="o">-</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">weight</span><span class="o">.</span><span class="n">avg</span>
+</pre></div>
+<p>Where <code>beta</code> is a parameter from 0 to 1 that controls how much momentum we want: as <code>beta</code> increases, we care less about the current gradient.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="k">def</span> <span class="nf">average_grad</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">mom</span><span class="p">,</span> <span class="n">grad_avg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="c1"># mom is short for momentum</span>
+    <span class="k">if</span> <span class="n">grad_avg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">grad_avg</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;grad_avg&#39;</span><span class="p">:</span> <span class="n">mom</span> <span class="o">*</span> <span class="n">grad_avg</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">mom</span><span class="p">)</span> <span class="o">*</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="p">}</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="k">def</span> <span class="nf">momentum_step</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">grad_avg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">grad_avg</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=-</span><span class="n">lr</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">opt_func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">Optimizer</span><span class="p">,</span> <span class="n">cbs</span><span class="o">=</span><span class="p">[</span><span class="n">average_grad</span><span class="p">,</span> <span class="n">momentum_step</span><span class="p">],</span> <span class="n">mom</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span> <span class="o">=</span> <span class="n">get_learner</span><span class="p">(</span><span class="n">opt_func</span><span class="o">=</span><span class="n">opt_func</span><span class="p">)</span>
+<span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">3e-2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: left;">
+      <th>epoch</th>
+      <th>train_loss</th>
+      <th>valid_loss</th>
+      <th>accuracy</th>
+      <th>time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>2.971689</td>
+      <td>2.494611</td>
+      <td>0.292229</td>
+      <td>00:47</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>2.443049</td>
+      <td>1.767426</td>
+      <td>0.400255</td>
+      <td>00:47</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>2.192378</td>
+      <td>1.744862</td>
+      <td>0.414268</td>
+      <td>00:46</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Adding-adaptive-learning-rates-(RMSProp)">Adding adaptive learning rates (RMSProp)<a class="anchor-link" href="#Adding-adaptive-learning-rates-(RMSProp)"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Not all parameters are going to be equal, so they also won't have the same gradients; some will be small, some will be large. So, why should we give them all the same learning rate? Here comes adaptive learning rates: we can speed up training by having a global learning rate, but use more of it the smaller the gradients are.</p>
+<p>We can have adaptive learning rates by dividing the current gradient by the average of the previous gradients. But, we can't just take the average of the gradients since the sum of similar positive and negative numbers will be 0 (hence, leading to a divide by zero). Instead, we take the square, then sum, then square root.</p>
+<div class="highlight"><pre><span></span><span class="n">weight</span><span class="o">.</span><span class="n">square_avg</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">weight</span><span class="o">.</span><span class="n">square_avg</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">weight</span><span class="o">.</span><span class="n">grad</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">new_weight</span>        <span class="o">=</span> <span class="n">weight</span> <span class="o">-</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">weight</span><span class="o">.</span><span class="n">grad</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">weight</span><span class="o">.</span><span class="n">square_avg</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+</pre></div>
+<p>Now, we have two parameters: <code>alpha</code> and <code>eps</code>. <code>alpha</code> is like <code>beta</code> and <code>eps</code> (usually a small number like <code>1e-8</code>) is added for <a href="https://mathworld.wolfram.com/NumericalStability.html">numerical stability</a>.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="k">def</span> <span class="nf">average_square_grad</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">square_mom</span><span class="p">,</span> <span class="n">square_avg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">square_avg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+        <span class="n">square_avg</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;square_avg&#39;</span><span class="p">:</span> <span class="n">square_mom</span> <span class="o">*</span> <span class="n">square_avg</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">square_mom</span><span class="p">)</span> <span class="o">*</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span> <span class="o">**</span> <span class="mi">2</span><span class="p">}</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This method is called RMSProp since we're doing root-mean-squared propagation, hence <code>rms_prop_step</code>:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="k">def</span> <span class="nf">rms_prop_step</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">square_avg</span><span class="p">,</span> <span class="n">eps</span><span class="p">,</span> <span class="n">grad_avg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">denom</span> <span class="o">=</span> <span class="n">square_avg</span><span class="o">.</span><span class="n">sqrt</span><span class="p">()</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="n">eps</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">addcdiv_</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">denom</span><span class="p">,</span> <span class="n">value</span><span class="o">=-</span><span class="n">lr</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">opt_func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">Optimizer</span><span class="p">,</span> <span class="n">cbs</span><span class="o">=</span><span class="p">[</span><span class="n">average_square_grad</span><span class="p">,</span> <span class="n">rms_prop_step</span><span class="p">],</span>
+                   <span class="n">square_mom</span><span class="o">=</span><span class="mf">0.99</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span> <span class="o">=</span> <span class="n">get_learner</span><span class="p">(</span><span class="n">opt_func</span><span class="o">=</span><span class="n">opt_func</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">3e-3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: left;">
+      <th>epoch</th>
+      <th>train_loss</th>
+      <th>valid_loss</th>
+      <th>accuracy</th>
+      <th>time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>2.801922</td>
+      <td>2.450024</td>
+      <td>0.147516</td>
+      <td>00:47</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>2.389270</td>
+      <td>2.579986</td>
+      <td>0.290955</td>
+      <td>00:48</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>1.955754</td>
+      <td>1.685765</td>
+      <td>0.450955</td>
+      <td>00:47</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Adaptive-learning-rates-and-momentum---Adam"><strong>Ada</strong>ptive learning rates and <strong>m</strong>omentum - Adam<a class="anchor-link" href="#Adaptive-learning-rates-and-momentum---Adam"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You know, it would be nice if we could have both momentum for the gradients while also having adaptive learning rates. If only... oh, there's Adam. Hypothetically, Adam will stand for adaptive learning rates and momentum, where you take the moving average of the gradients for direction (we were just using the current gradient in RMSProp) and the moving average of the gradients squared for adaptive learning rates.</p>
+<p>However, instead of taking the moving average of the gradients, we take the <em>unbiased</em> moving average, which is:</p>
+<div class="highlight"><pre><span></span><span class="n">weight_avg</span>   <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">weight_avg</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span> <span class="o">*</span> <span class="n">weight</span><span class="o">.</span><span class="n">grad</span>
+<span class="n">unbiased_avg</span> <span class="o">=</span> <span class="n">weight</span><span class="o">.</span><span class="n">avg</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span> <span class="o">**</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+</pre></div>
+<p>Where we divide the moving average by <code>1 - beta ** (i + 1)</code> which becomes closer to 1 as <code>i</code>, the <code>i</code>-th iteration of <code>n</code> batches in an epoch, reaches <code>n</code>. The unbiased moving average will look more like the gradients at the beginning (<code>weight_avg</code> is initialized as <code>0</code>s so we don't want mostly <code>0</code> gradients at the beginning) and become closer to the normal moving average over time.</p>
+<p>Overall, Adam looks like:</p>
+<div class="highlight"><pre><span></span><span class="n">weight_avg</span>   <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">weight_avg</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span> <span class="o">*</span> <span class="n">weight</span><span class="o">.</span><span class="n">grad</span>
+<span class="n">unbiased_avg</span> <span class="o">=</span> <span class="n">weight</span><span class="o">.</span><span class="n">avg</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span> <span class="o">**</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">weight</span><span class="o">.</span><span class="n">square_avg</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">weight</span><span class="o">.</span><span class="n">square_avg</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">weight</span><span class="o">.</span><span class="n">grad</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">new_weight</span>        <span class="o">=</span> <span class="n">weight</span> <span class="o">-</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">unbiased_avg</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">weight</span><span class="o">.</span><span class="n">square_avg</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+</pre></div>
+<p>The default for <code>(beta, alpha)</code> is <code>(0.9, 0.99)</code> and <code>eps</code> is <code>1e-8</code>.</p>
+<p>In the end, we get the combined benefits of momentum and adaptive learning rates to get:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-python"><pre><span></span><span class="n">learn</span> <span class="o">=</span> <span class="n">get_learner</span><span class="p">()</span>
+<span class="n">learn</span><span class="o">.</span><span class="n">fit_one_cycle</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">3e-3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: left;">
+      <th>epoch</th>
+      <th>train_loss</th>
+      <th>valid_loss</th>
+      <th>accuracy</th>
+      <th>time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>2.515065</td>
+      <td>1.997084</td>
+      <td>0.380892</td>
+      <td>00:48</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>1.837666</td>
+      <td>1.562741</td>
+      <td>0.468790</td>
+      <td>01:01</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>1.487112</td>
+      <td>1.273339</td>
+      <td>0.580637</td>
+      <td>00:51</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="The-more-correct-weight-decay-school-of-thought">The more correct weight decay school of thought<a class="anchor-link" href="#The-more-correct-weight-decay-school-of-thought"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Weight decay can be thought in two ways. I mostly thought of it as adding the square of the weights to the loss, where it can instead be added to the gradient like:</p>
+<div class="highlight"><pre><span></span><span class="n">weight</span><span class="o">.</span><span class="n">grad</span> <span class="o">+=</span> <span class="n">wd</span> <span class="o">*</span> <span class="n">weight</span>
+</pre></div>
+<p>The other way is to decay the weights by <code>lr * wd</code> and add it to the new weights like</p>
+<div class="highlight"><pre><span></span><span class="n">new_weight</span> <span class="o">=</span> <span class="n">weight</span> <span class="o">-</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">weight</span><span class="o">.</span><span class="n">grad</span> <span class="o">-</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">wd</span> <span class="o">*</span> <span class="n">weight</span>
+</pre></div>
+<p>The two are equivalent through the lens of vanilla SGD. However, when we introduce momentum, we can no longer think of it as adding <code>wd * weight</code> to <code>weight.grad</code> since we'd end up having something like:</p>
+<div class="highlight"><pre><span></span><span class="n">weight_avg</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">weight_avg</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">weight</span><span class="o">.</span><span class="n">grad</span> <span class="o">+</span> <span class="n">wd</span> <span class="o">*</span> <span class="n">weight</span><span class="p">)</span>
+</pre></div>
+<p>Instead, we use the second method. With Adam, it would look like:</p>
+<div class="highlight"><pre><span></span><span class="n">new_weight</span> <span class="o">=</span> <span class="n">weight</span> <span class="o">-</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">unbiased_avg</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">weight</span><span class="o">.</span><span class="n">square_avg</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span> <span class="o">-</span> <span class="n">lr</span> <span class="o">*</span> <span class="n">wd</span> <span class="o">*</span> <span class="n">weight</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Althought fastai uses Adam as its default optimizer, which you can verify with the summary we had in <a href="https://geon-youn.github.io/DunGeon/vision/2022/04/30/Convolutional-Neural-Networks.html">this blog</a>, there are also a variety of other ones that fastai provides <a href="https://github.com/fastai/fastai/blob/master/nbs/12_optimizer.ipynb">here</a>. The main takeaway for this blog would be momentum and adaptive learning rates.</p>
+<p>Momentum allows us to train the model with more stability since we aren't instantaneously changing direction according to the new gradients. Instead, we slowly change direction through a moving average of the previous gradients.</p>
+<p>With the idea of moving averages, we have adaptive learning rates that allow each parameter to be special and learn at its own, although forcefully accelerated, pace.</p>
+<p>Combining these two ideas give us Adam, which has shown to be much more efficient than vanilla SGD, and using only one of the two ideas (SGD with momentum and RMSProp).</p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="geon-youn/DunGeon"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/DunGeon/fastai/2022/05/13/Adam.html" hidden></a>
+
+  <script src="https://utteranc.es/client.js"
+    repo="geon-youn/DunGeon"
+    issue-term="pathname"
+    theme="github-light"
+    crossorigin="anonymous"
+    async>
+  </script>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/DunGeon/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/DunGeon/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/DunGeon/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>The DunGeon holding ipynbs</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/geon-youn" target="_blank" title="geon-youn"><svg class="svg-icon grey"><use xlink:href="/DunGeon/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/griolu" target="_blank" title="griolu"><svg class="svg-icon grey"><use xlink:href="/DunGeon/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
